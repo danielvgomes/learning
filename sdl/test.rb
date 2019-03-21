@@ -4,6 +4,13 @@ require 'sdl'
 require 'time'
 
 SDL.init SDL::INIT_VIDEO
+
+def dro(s)
+	a = b = 200
+	s.fill_rect a, b, 10, 10, WHITEFOK
+end
+
+
 screen = SDL::set_video_mode 800, 600, 24, SDL::SWSURFACE
 x = y = 0
 r = 0
@@ -12,6 +19,9 @@ b = 0
 
 
 BGCOLOR = screen.format.mapRGB 0, 0, 0
+WHITEFOK = screen.format.mapRGB 255, 255, 255
+
+
 linecolor = screen.format.mapRGB r, g, b
 
 running = true
@@ -29,10 +39,10 @@ while running
         y = event.y
     end
   end
-
   screen.fill_rect 0, 0, 640, 480, BGCOLOR
   screen.draw_line x, 0, x, 479, linecolor
   screen.draw_line 0, y, 639, y, linecolor
+  dro(screen)
   screen.flip
   counter += 1
   r += 1
@@ -54,3 +64,4 @@ linecolor = screen.format.mapRGB r, g, b
     past_time = Time.now
   end
 end
+
