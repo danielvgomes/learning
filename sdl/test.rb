@@ -2,13 +2,17 @@
 
 require 'sdl'
 require 'time'
+require_relative 'point'
 
 SDL.init SDL::INIT_VIDEO
 
-def dro(s)
-	a = b = 200
-	s.fill_rect a, b, 10, 10, WHITEFOK
+def dro(s, o)
+	s.fill_rect o.getX, o.getY, o.getSize, o.getSize, WHITEFOK
 end
+
+
+
+
 
 
 screen = SDL::set_video_mode 800, 600, 24, SDL::SWSURFACE
@@ -16,6 +20,10 @@ x = y = 0
 r = 0
 g = 0
 b = 0
+
+
+
+blah = Point.new(10, 400, 300)
 
 
 BGCOLOR = screen.format.mapRGB 0, 0, 0
@@ -37,12 +45,17 @@ while running
       when SDL::Event2::MouseMotion
         x = event.x
         y = event.y
+	blah.destino(x, y, Time.now)
     end
   end
-  screen.fill_rect 0, 0, 640, 480, BGCOLOR
-  screen.draw_line x, 0, x, 479, linecolor
-  screen.draw_line 0, y, 639, y, linecolor
-  dro(screen)
+  screen.fill_rect 0, 0, 800, 600, BGCOLOR
+  screen.draw_line x, 0, x, 599, linecolor
+  screen.draw_line 0, y, 799, y, linecolor
+
+  dro(screen, blah)
+  
+  blah.move(Time.now)
+
   screen.flip
   counter += 1
   r += 1
@@ -59,7 +72,7 @@ while running
   end
 linecolor = screen.format.mapRGB r, g, b
   if (Time.now - past_time) >= 1
-    p counter
+    # p counter
     counter = 0
     past_time = Time.now
   end
