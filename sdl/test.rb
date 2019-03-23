@@ -1,6 +1,6 @@
 #! /usr/bin/ruby -w
 
-require 'sdl'
+require 'sdl2'
 require 'time'
 require_relative 'point'
 
