@@ -1,5 +1,5 @@
-*.FLAC
-*.ttf
+# *.FLAC
+# *.ttf
 *.swp
 *.rb~
 *.gem
