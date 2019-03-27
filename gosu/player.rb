@@ -1,6 +1,6 @@
 class Player
   def initialize
-    @image = Gosu::Image.new("media/starfighter.bmp")
+    @image = Gosu::Image.new("media/object.bmp")
     @x = @y = @vel_x = @vel_y = @angle = 0.0
     @x2 = @y2 = 0.0
     @score = 0
@@ -31,7 +31,7 @@ class Player
     
     @vel_x *= 0.95
     @vel_y *= 0.95
-    p @x2.to_s + " " + @y2.to_s
+    # p @x2.to_s + " " + @y2.to_s
   end
 
   def draw
