@@ -1,5 +1,8 @@
 class Player
-  def initialize
+
+attr_accessor :x, :y
+
+def initialize
     @image = Gosu::Image.new("media/object.bmp")
     @x = @y = @vel_x = @vel_y = @angle = 0.0
     @x2 = @y2 = 0.0
@@ -11,21 +14,35 @@ class Player
   end
   
   def turn_left
-    @angle -= 4.5
+	  @angle -= 4.5
+	  if @angle < 0
+		  @angle = 360
+	  end
   end
   
   def turn_right
-    @angle += 4.5
+	  @angle += 4.5
+	  if @angle > 360
+		  @angle = 0
+	  end
   end
   
-  def accelerate
-    @vel_x += Gosu.offset_x(@angle, 0.5)
-    @vel_y += Gosu.offset_y(@angle, 0.5)
+  def accelerate(angle)
+
+    # p "angle received: " + angle.to_s + ", @angle: " + @angle.to_s
+
+
+    if (@angle > angle+15 || @angle < angle-15)
+      turn_right
+    else
+      @vel_x += Gosu.offset_x(@angle, 0.5)
+      @vel_y += Gosu.offset_y(@angle, 0.5)
+    end
   end
   
   def move
-    @x2 += @vel_x
-    @y2 += @vel_y
+    @x += @vel_x
+    @y += @vel_y
     #@x %= 640
     #@y %= 480
     
