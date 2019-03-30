@@ -15,6 +15,7 @@ end
   def initialize
     super 640, 480
     self.caption = "Tutorial Game"
+    @cursor = Gosu::Image.new('media/cursor.png')
     @font = Gosu::Font.new(20)
 
     @background_image = Gosu::Image.new("media/bg.bmp", :tileable => true)
@@ -37,6 +38,7 @@ end
   end
 
   def draw
+	  @cursor.draw mouse_x, mouse_y, 2, 0.5, 0.5
     @player.draw
     @background_image.draw(0, 0, ZOrder::BACKGROUND)
     # @background_image.draw(0, 400, ZOrder::BACKGROUND)
