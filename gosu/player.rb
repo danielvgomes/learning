@@ -2,64 +2,54 @@ class Player
 
 attr_accessor :x, :y
 
-def initialize
+def initialize(window)
     @image = Gosu::Image.new("media/object.bmp")
     @x = @y = @vel_x = @vel_y = @angle = 0.0
     @x2 = @y2 = 0.0
     @score = 0
     @milli = Gosu.milliseconds
+    @w = window
+    @diff = 0
+    @nextX = @nextY = 0
+    @ox = @oy = 0
   end
 
   def warp(x, y)
     @x, @y = x, y
   end
+
+def turn
+p "lol"
+if @diff > 0
+        @angle -= @diff/10
+      else
+	      @angle += (@diff/10).abs
+      end
+@angle %= 360
+
+end
+
+
+
+
+  def accelerate
+    angle = Gosu.angle(@x, @y, @w.mouse_x, @w.mouse_y)
+    @nextX = @w.mouse_x
+    @nextY = @w.mouse_y
   
-  def accelerate(angle, w)
-
-
-	  p "HAHAHAHJAJS" + w.mouse_x.to_s
-	#  p "angle = " + angle.to_s
-	#  p "@angle = " + @angle.to_s
-  if (@milli + 100) < Gosu.milliseconds
+    if (@milli + 100) < Gosu.milliseconds
 
 	  p "my current angle: " + @angle.to_s
 	  p "my next angle: " + angle.to_s
 
-if angle < @angle
-	p "left, unless difference > 180"
-  if (@angle - angle) > 180
-	  p "TURNING RIGHT"
-  else
-	  p "TURNING LEFT"
-  end
-else
-	p "right, unless difference > 180"
-	if (angle - @angle) > 180
-		p "TURNIN LEFTIE"
-	else
-		p "TURNIN RIGTHY"
-	end
-end
+
+	  @diff = Gosu.angle_diff(angle, @angle)
 
 @milli = Gosu.milliseconds
   end
 
-
-
-
-p "#####"
-
-# p "i show you angels -> angle = " + angle.to_s + ", @angle = " + @angle.to_s + ", sub: " + (angle - @angle).to_s
-
-# p "@a - a -> " + (@angle - angle).round(0).to_s
-# p "a - @a -> " + (angle - @angle).round(0).to_s
-
-
-
-	 @angle = angle
-
-    ox = Gosu.offset_x(@angle, 1.1)
-    oy = Gosu.offset_y(@angle, 1.1)
+    @ox = Gosu.offset_x(@angle, 1.1)
+    @oy = Gosu.offset_y(@angle, 1.1)
 
     if (@angle >= 0 && @angle < 90) || (@angle > 270 && @angle <= 360)
 #     p "going up"
@@ -72,11 +62,31 @@ p "#####"
 #     p "going left"
     end
       
-#    @vel_x += ox
-#    @vel_y += oy
+
+
+
+
+    if @diff.round(0) != 0
+	    turn
+      end
+
+
+
   end
   
   def move
+
+	  if @diff.round(0) != 0
+	turn
+else
+
+
+	  if (@x.round(0) != @nextX.round(0) && (@y.round(0) != @nextY.round(0)))
+    @vel_x += @ox
+    @vel_y += @oy
+	  end
+
+
     @x += @vel_x
     @y += @vel_y
     #@x %= 640
@@ -85,6 +95,7 @@ p "#####"
     @vel_x *= 0.6
     @vel_y *= 0.6
   end
+end
 
   def draw
     @image.draw_rot(@x, @y, 1, @angle)
