@@ -10,9 +10,9 @@ end
   def initialize
     super 640, 480
     self.caption = "Tutorial Game"
-    @cursor = Gosu::Image.new('media/cursor.png')
+    @cursor = Gosu::Image.new('app/media/cursor.png')
     @font = Gosu::Font.new(20)
-    @background_image = Gosu::Image.new("media/bg.bmp", :tileable => true)
+    @background_image = Gosu::Image.new("app/media/bg.bmp", :tileable => true)
 
     @player = Player.new self
     @player.warp(320, 240)
@@ -23,7 +23,9 @@ end
     @player.move
     
     if Gosu.button_down? Gosu::MS_LEFT
-      @player.accelerate
+	    @player.set_x_y(mouse_x, mouse_y)
+	    @player.accelerate
+            #p "keep updating"
     end
   end
 
