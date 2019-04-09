@@ -22,6 +22,7 @@ end
 
 def set_x_y(x, y)
 	@mouse_angle = Gosu.angle(@x, @y, x, y)
+	@diff = Gosu.angle_diff(@angle, @mouse_angle)
 end
 
 
@@ -48,54 +49,30 @@ def turn
 	@angle %= 360
 end
 
-
-
 def accelerate
-#	@mouse_angle = Gosu.angle(@x, @y, @w.mouse_x, @w.mouse_y)
-	@nextX = @w.mouse_x
-	@nextY = @w.mouse_y
-
-	if (@milli + 100) < Gosu.milliseconds
-#		p "my current angle: " + @angle.to_s
-#		p "my next angle: " + @mouse_angle.to_s
-		@diff = Gosu.angle_diff(@mouse_angle, @angle)
-
-		@milli = Gosu.milliseconds
-	end
-
 	@ox = Gosu.offset_x(@angle, 1.1)
 	@oy = Gosu.offset_y(@angle, 1.1)
-
-	if (@angle >= 0 && @angle < 90) || (@angle > 270 && @angle <= 360)
-		#     p "going up"
-	else
-		#     p "going down"
-	end
-
-	if @angle > 0 && @angle < 180
-		#     p "going right"
-	else
-		#     p "going left"
-	end
+	@milli = Gosu.milliseconds
+	@vel_x += @ox
+	@vel_y += @oy
+	@x += @vel_x
+	@y += @vel_y
+	#@x %= 640
+	#@y %= 480
+	@vel_x = 0
+	@vel_y = 0
 end
   
-def move
+def move # ou gira ou anda
+
 	if @diff.round(0).abs > 0
 		turn
-	else
-		if (@x.round(0) != @nextX.round(0) && (@y.round(0) != @nextY.round(0)))
-			@vel_x += @ox
-			@vel_y += @oy
-		end
-
-		@x += @vel_x
-		@y += @vel_y
-		#@x %= 640
-		#@y %= 480
-
-		@vel_x = 0
-		@vel_y = 0
 	end
+
+	if @diff == 0
+		accelerate
+	end
+
 end
 
 def draw

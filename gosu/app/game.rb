@@ -24,7 +24,6 @@ end
     
     if Gosu.button_down? Gosu::MS_LEFT
 	    @player.set_x_y(mouse_x, mouse_y)
-	    @player.accelerate
             #p "keep updating"
     end
   end
