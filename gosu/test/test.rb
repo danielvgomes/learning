@@ -13,4 +13,14 @@ class TestFoo < Test::Unit::TestCase
 		assert 4 > 2
 	end
 
+	def test_gosu
+		assert_equal Gosu.angle_diff(0, 360), 0.0
+	end
+
+	def test_gosu2
+		assert_equal Gosu.angle_diff(360, 0), 0.0
+	end
+
+
+
 end
