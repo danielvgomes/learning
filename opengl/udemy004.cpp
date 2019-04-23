@@ -2,29 +2,39 @@
 #include <stdio.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <math.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // window dimensions
 const GLint WIDTH = 800, HEIGHT = 600;
 
-GLuint VAO, VBO, shader;
+GLuint VAO, VBO, shader, uniformModel;
+bool direction = true;
+float triOffset = 0.0f;
+float triMaxOffset = 0.7f;
+float triIncrement = 0.005f;
+const float toRadians = 3.14159265f / 180.0f;
 
 // vertex shader
-static const char* vShader = "						\n\
-#version 330								\n\
-layout(location = 0) in vec3 pos;					\n\
-void main()								\n\
-{									\n\
-	gl_Position = vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);	\n\
+static const char* vShader = "								\n\
+#version 330										\n\
+layout(location = 0) in vec3 pos;							\n\
+uniform mat4 model;									\n\
+void main()										\n\
+{											\n\
+	gl_Position = model * vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);		\n\
 }";
 
 
 // fragment shader
-static const char* fShader = "						\n\
-#version 330								\n\
-out vec4 colour;							\n\
-void main()								\n\
-{									\n\
-	colour = vec4(1.0, 0.0, 0.0, 1.0);				\n\
+static const char* fShader = "								\n\
+#version 330										\n\
+out vec4 colour;									\n\
+void main()										\n\
+{											\n\
+	colour = vec4(1.0, 0.0, 0.0, 1.0);						\n\
 }";
 
 void CreateTriangle()
@@ -117,7 +127,7 @@ void CompileShaders() {
 		return;
 	}
 
-
+	uniformModel = glGetUniformLocation(shader, "model");
 }
 
 int main()
@@ -179,11 +189,37 @@ int main()
 		// get + handle user input events
 		glfwPollEvents();
 
+		if (direction)
+		{
+			triOffset += triIncrement;
+		}
+		else
+		{
+			triOffset -= triIncrement;
+		}
+
+		if (abs(triOffset) >= triMaxOffset)
+		{
+			direction = !direction;
+		}
+
+
+
+
 		// clear window
 		glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glUseProgram(shader);
+
+		glm::mat4 model;
+		model = glm::translate(model, glm::vec3(triOffset, triOffset, 0.0f));
+		model = glm::rotate(model, 45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+
+		// glUniform1f(uniformModel, triOffset);
+		glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+
+
 		glBindVertexArray(VAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
