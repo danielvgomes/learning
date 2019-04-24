@@ -52,11 +52,17 @@ void main()										\n\
 void CreateTriangle()
 {
 	unsigned int indices[] = {
-		0, 4, 5,
-		5, 6, 7,
-		6, 3, 7,
-		7, 1, 5,
-		1, 2, 3
+		0, 1, 3,
+		3, 2, 0,
+		0, 4, 6,
+		6, 2, 0,
+		6, 7, 3,
+		6, 2, 3,
+		4, 6, 7,
+		4, 5, 7,
+		1, 5, 7,
+		7, 3, 1
+
 	};
 
 	GLfloat vertices[] = {
@@ -284,7 +290,7 @@ int main()
 		glBindVertexArray(VAO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
 
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 30, GL_UNSIGNED_INT, 0);
 
 
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
