@@ -52,17 +52,23 @@ void main()										\n\
 void CreateTriangle()
 {
 	unsigned int indices[] = {
-		0, 3, 1,
-		1, 3, 2,
-		2, 3, 0,
-		0, 1, 2
+		0, 4, 5,
+		5, 6, 7,
+		6, 3, 7,
+		7, 1, 5,
+		1, 2, 3
 	};
 
 	GLfloat vertices[] = {
-		-1.0f, -1.0f, 0.0f,
-		0.0f, -1.0f, 1.0f,
-		1.0f, -1.0f, 0.0f,
-		0.0f, 1.0f, 0.0f
+		-1.0f, -1.0f, +1.0f,
+		+1.0f, -1.0f, +1.0f,
+		-1.0f, -1.0f, -1.0f,
+		+1.0f, -1.0f, -1.0f,
+
+		-1.0f, +1.0f, +1.0f,
+		+1.0f, +1.0f, +1.0f,
+		-1.0f, +1.0f, -1.0f,
+		+1.0f, +1.0f, -1.0f
 	};
 
 	glGenVertexArrays(1, &VAO);
@@ -264,10 +270,10 @@ int main()
 		glm::mat4 model;
 		
 		
-		model = glm::translate(model, glm::vec3(triOffset, 0.0f, -1.5f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
 		
 		
-		//model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.5f, 0.0f));
+		model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.5f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.3f, 0.3f, 1.0f));
 
 		// glUniform1f(uniformModel, triOffset);
