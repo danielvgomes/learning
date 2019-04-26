@@ -7,8 +7,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "009_mesh.h"
-#include "009_shader.h"
+#include "mesh.h"
+#include "shader.h"
 
 // window dimensions
 const GLint width = 800, height = 600;
@@ -31,28 +31,11 @@ float minsize = 0.1f;
 bool size_direction = true;
 
 // vertex shader
-static const char* v_shader = "								\n\
-#version 330										\n\
-layout(location = 0) in vec3 pos;							\n\
-out vec4 vCol; 										\n\
-uniform mat4 model;									\n\
-uniform mat4 projection;								\n\
-void main()										\n\
-{											\n\
-	gl_Position = projection * model * vec4(pos, 1.0);				\n\
-	vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);					\n\
-}";
+static const char* v_shader = "shaders/shader.vert";
 
 
 // fragment shader
-static const char* f_shader = "								\n\
-#version 330										\n\
-in vec4 vCol;										\n\
-out vec4 colour;									\n\
-void main()										\n\
-{											\n\
-	colour = vCol; //vec4(1.0, 0.0, 0.0, 1.0);					\n\
-}";
+static const char* f_shader = "shaders/shader.frag";
 
 void create_objects()
 {
@@ -81,7 +64,7 @@ void create_objects()
 void create_shaders()
 {
 	Shader *shader1 = new Shader();
-	shader1->create_from_string(v_shader, f_shader);
+	shader1->create_from_files(v_shader, f_shader);
 	shader_list.push_back(*shader1);
 }
 

@@ -1,5 +1,5 @@
-#include "009_shader.h"
-#include <cstring>
+#include "shader.h"
+#include <string.h>
 
 Shader::Shader()
 {
@@ -12,6 +12,38 @@ void Shader::create_from_string(const char* vertex_code, const char* fragment_co
 {
 	compile_shader(vertex_code, fragment_code);
 }
+
+void Shader::create_from_files(const char* vertex_location, const char* fragment_location)
+{
+	std::string vertex_string = read_file(vertex_location);
+	std::string fragment_string = read_file(fragment_location);
+	const char* vertex_code = vertex_string.c_str();
+	const char* fragment_code = fragment_string.c_str();
+
+	compile_shader(vertex_code, fragment_code);
+}
+
+std::string Shader::read_file(const char* file_location)
+{
+	std::string content;
+	std::ifstream file_stream(file_location, std::ios::in);
+
+	if (!file_stream.is_open())
+	{
+		printf("Failed to read %s! File doesn't exist.", file_location);
+	}
+
+	std::string line = "";
+	while(!file_stream.eof())
+	{
+		std::getline(file_stream, line);
+		content.append(line + "\n");
+	}
+
+	file_stream.close();
+	return content;
+}
+
 
 void Shader::compile_shader(const char* vertex_code, const char* fragment_code)
 {

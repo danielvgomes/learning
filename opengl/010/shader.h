@@ -1,5 +1,3 @@
-
-
 #include <stdio.h>
 #include <string>
 #include <iostream>
@@ -13,6 +11,9 @@ class Shader
 		Shader();
 
 		void create_from_string(const char* vertex_code, const char* fragment_code);
+		void create_from_files(const char* vertex_location, const char* fragment_location);
+
+		std::string read_file(const char* file_location);
 
 		GLuint get_projection_location();
 		GLuint get_model_location();
