@@ -59,6 +59,7 @@ int win::initialize()
 
 	// handle key + mouse input
 	create_callbacks();
+	glfwSetInputMode(main_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// allow modern extension features
 	glewExperimental = GL_TRUE;
@@ -87,6 +88,21 @@ void win::create_callbacks()
 	glfwSetKeyCallback(main_window, handle_keys);
 	glfwSetCursorPosCallback(main_window, handle_mouse);
 }
+
+GLfloat win::get_x_change()
+{
+	GLfloat the_change = x_change;
+	x_change = 0.0f;
+	return the_change;
+}
+
+GLfloat win::get_y_change()
+{
+	GLfloat the_change = y_change;
+	y_change = 0.0f;
+	return the_change;
+}
+
 
 
 void win::handle_keys(GLFWwindow* window, int key, int code, int action, int mode)

@@ -15,6 +15,10 @@ class win
 
 		bool get_should_close() { return glfwWindowShouldClose(main_window); }
 
+		bool* get_keys() { return keys; }
+		GLfloat get_x_change();
+		GLfloat get_y_change();
+
 		void swap_buffers() { glfwSwapBuffers(main_window); }
 
 
