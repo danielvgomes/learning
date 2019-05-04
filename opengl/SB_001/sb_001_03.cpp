@@ -12,6 +12,7 @@ int fps;
 time_t timer;
 long past_time;
 
+GLuint compile_shaders(void);
 
 int main() {
 
@@ -33,6 +34,7 @@ int main() {
 	glfwMakeContextCurrent(window);
 	glewExperimental = GL_TRUE;
 	glewInit();
+	compile_shaders();
 
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	const GLubyte* version = glGetString(GL_VERSION);
@@ -73,3 +75,12 @@ int main() {
 	glfwTerminate();
 	return 0;
 }
+
+GLuint compile_shaders(void)
+{
+	GLuint vertex_shader;
+	GLuint fragment_shader;
+	GLuint program;
+
+	return vertex_shader;
+};
