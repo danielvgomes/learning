@@ -19,7 +19,6 @@ GLuint compile_shaders(void);
 GLenum err;
 void startup(void);
 void shutdown(void);
-void ce(void);
 
 int main() {
 
@@ -31,7 +30,6 @@ int main() {
 	}
 
 	GLFWwindow* window = glfwCreateWindow(640, 480, "Hello Book", NULL, NULL);
-	ce();
 
 	if(!window) {
 		fprintf(stderr, "ERROR: could not open window with GFLW3\n");
@@ -40,7 +38,6 @@ int main() {
 	}
 
 	glfwMakeContextCurrent(window);
-	ce();
 	glewExperimental = GL_TRUE;
 	glewInit();
 	startup();
@@ -67,29 +64,31 @@ int main() {
 		GLfloat color[] = { (float)sin(counter*PI/180) * 0.5f + 0.5f,
 			            (float)cos(counter*PI/180) * 0.5f + 0.5f,
 				    0.0f, 1.0f };
-		ce();
 		glClearBufferfv(GL_COLOR, 0, color);
-		ce();
 
 		// use program
 		glUseProgram(rendering_program);
-		printf("aqikm, lrol");
-		ce();
 
 		// draw one thing
 		glDrawArrays(GL_POINTS, 0, 1);
-		ce();
 		glPointSize(abs(100*(float)sin(counter*PI/180)));
-		ce();
 		// printf("lollkkooo %f\n", 100*(float)sin(counter*PI/180));
 		
 		glfwPollEvents(); // se nao, nao da nem pra fechar a janela (input handler bitch), kkk
-		ce();
 
 		// put the stuff we've been drawing onto the display
 		glfwSwapBuffers(window); // se nao, nem aparece nada
-		ce();
 
+		while((err = glGetError()) != GL_NO_ERROR)
+		{
+			if (err == GL_INVALID_ENUM) { printf("INVALID_ENUM\n"); }
+			if (err == GL_INVALID_VALUE) { printf("INVALID_VALUE\n"); }
+			if (err == GL_INVALID_OPERATION) { printf("INVALID_OPERATION\n"); }
+			if (err == GL_INVALID_FRAMEBUFFER_OPERATION) { printf("INVALD_FRAMEBUFFER_OPERATION\n"); }
+			if (err == GL_OUT_OF_MEMORY) { printf("GL_OUT_OF_MEMORY\n"); }
+			if (err == GL_STACK_UNDERFLOW) { printf("GL_STACK_UNDERFLOW\n"); }
+			if (err == GL_STACK_OVERFLOW) { printf("GL_STACK_OVERFLOW\n"); }
+		}
 	}
 
 	glfwTerminate();
@@ -139,7 +138,6 @@ GLuint compile_shaders(void)
 
 	// create program, attach shaders to it, and link it
 	program = glCreateProgram();
-	ce();
 
 	// tratamento de erro do outro curso
 	if (!program)
@@ -150,17 +148,12 @@ GLuint compile_shaders(void)
 
 
 	glAttachShader(program, vertex_shader);
-	ce();
 	glAttachShader(program, fragment_shader);
-	ce();
 	glLinkProgram(program);
-	ce();
 
 	// delete the shaders as the program has them now
 	glDeleteShader(vertex_shader);
-	ce();
 	glDeleteShader(fragment_shader);
-	ce();
 
 	return program;
 
@@ -171,9 +164,7 @@ void startup()
 {
 	rendering_program = compile_shaders();
 	glGenVertexArrays(1, &vertex_array_object);
-	ce();
 	glBindVertexArray(vertex_array_object);
-	ce();
 }
 
 void shutdown()
@@ -182,11 +173,4 @@ void shutdown()
 	glDeleteProgram(rendering_program);
 	glDeleteVertexArrays(1, &vertex_array_object);
 }
-
-void ce()
-{
-	err = glGetError();
-	printf("os erro e: %u\n", err);
-}
-	
 
