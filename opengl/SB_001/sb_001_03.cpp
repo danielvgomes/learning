@@ -59,12 +59,6 @@ int main() {
 			            (float)cos(counter*PI/180) * 0.5f + 0.5f,
 				    0.0f, 1.0f };
 		glClearBufferfv(GL_COLOR, 0, color);
-
-		// printf("sin de counter -> %f\n", sin(counter*PI/180));
-		// printf("cos de counter -> %f\n", cos(counter*PI/180));
-
-		
-		// glUseProgram(shader_programme);
 		
 		glfwPollEvents(); // se nao, nao da nem pra fechar a janela (input handler bitch), kkk
 
