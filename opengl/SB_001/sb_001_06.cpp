@@ -69,8 +69,19 @@ int main() {
 		// use program
 		glUseProgram(rendering_program);
 
+		// change attrib pq somo nozes
+		GLfloat attrib[] = { (float)sin(counter*PI/180) * 0.5f,
+				     (float)cos(counter*PI/180) * 0.6f,
+				     0.0f, 0.0f };
+
+		// atualizar attrib (comoasin)
+		glVertexAttrib4fv(0, attrib);
+		glVertexAttrib4fv(1, attrib);
+
 		// draw one thing
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		// glPatchParameteri(GL_PATCH_VERTICES, 3);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glDrawArrays(GL_PATCHES, 0, 3);
 		glPointSize(abs(100*(float)sin(counter*PI/180)));
 		// printf("lollkkooo %f\n", 100*(float)sin(counter*PI/180));
 		
@@ -101,6 +112,8 @@ GLuint compile_shaders(void)
 	printf("compile shaders function\n");
 	GLuint vertex_shader;
 	GLuint fragment_shader;
+	GLuint tess_control_shader;
+	GLuint tess_evaluation_shader;
 	GLuint program;
 
 	// source code for vertex shader
@@ -108,13 +121,24 @@ GLuint compile_shaders(void)
 	{
 		"#version 430 core								\n"
 		"										\n"
+		"layout (location = 0) in vec4 offset;						\n"
+		"layout (location = 1) in vec4 color;						\n"
+		"										\n"
+		"out VS_OUT									\n"
+		"{										\n"
+		"	vec4 color;								\n"
+		"} vs_out;									\n"
+		"										\n"
+		"/*out vec4 vs_color;*/								\n"
+		"										\n"
 		"void main(void)								\n"
 		"{										\n"
 		"	const vec4 vertices[3] = vec4[3](vec4( 0.25, -0.25, 0.5, 1.0),		\n"
 		"					 vec4(-0.25, -0.25, 0.5, 1.0),		\n"
 		"					 vec4( 0.25,  0.25, 0.5, 1.0));		\n"
 		"										\n"
-		"	gl_Position = vertices[gl_VertexID];					\n"
+		"	gl_Position = vertices[gl_VertexID] + offset;				\n"
+		"	vs_out.color = color;							\n"
 		"}										\n"
 	};
 
@@ -123,12 +147,53 @@ GLuint compile_shaders(void)
 	{
 		"#version 430 core								\n"
 		"										\n"
+		"/*in vec4 vs_color;*/								\n"
+		"in VS_OUT									\n"
+		"{										\n"
+		"	vec4 color;								\n"
+		"} fs_in;									\n"
+		"										\n"
 		"out vec4 color;								\n"
 		"										\n"
 		"void main(void)								\n"
 		"{										\n"
-		"	color = vec4(0.0, 0.8, 1.0, 1.0);					\n"
+		"	color = fs_in.color;							\n"
 		"}										\n"
+	};
+
+	// source code for tessellation control shader
+	static const GLchar * tess_control_shader_source[] =
+	{
+		"#version 430 core									\n"
+		"											\n"
+		"layout (vertices = 3) out;								\n"
+		"											\n"
+		"void main(void)									\n"
+		"{											\n"
+		"	if (gl_InvocationID == 0)							\n"
+		"	{										\n"
+		"		gl_TessLevelInner[0] = 5.0;						\n"
+		"		gl_TessLevelOuter[0] = 5.0;						\n"
+		"		gl_TessLevelOuter[1] = 5.0;						\n"
+		"		gl_TessLevelOuter[2] = 5.0;						\n"
+		"	}										\n"
+		"	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;	\n"
+		"}											\n"
+	};
+
+	// source code for tessellation evaluation shader
+	static const GLchar * tess_evaluation_shader_source[] =
+	{
+		"#version 430 core									\n"
+		"											\n"
+		"layout (triangles, equal_spacing, cw) in;						\n"
+		"											\n"
+		"void main(void)									\n"
+		"{											\n"
+		"	gl_Position = (gl_TessCoord.x * gl_in[0].gl_Position +				\n"
+		"		       gl_TessCoord.y * gl_in[1].gl_Position +				\n"
+		"		       gl_TessCoord.z * gl_in[2].gl_Position);				\n"
+		"}											\n"
 	};
 
 	// create and compile vertex shader
@@ -140,6 +205,16 @@ GLuint compile_shaders(void)
 	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
 	glCompileShader(fragment_shader);
+
+	// create and compile tessellation shader
+	tess_control_shader = glCreateShader(GL_TESS_CONTROL_SHADER);
+	glShaderSource(tess_control_shader, 1, tess_control_shader_source, NULL);
+	glCompileShader(tess_control_shader);
+
+	// create and compile tessellation evaluation shader
+	tess_evaluation_shader = glCreateShader(GL_TESS_EVALUATION_SHADER);
+	glShaderSource(tess_evaluation_shader, 1, tess_evaluation_shader_source, NULL);
+	glCompileShader(tess_evaluation_shader);
 
 	// create program, attach shaders to it, and link it
 	program = glCreateProgram();
@@ -153,7 +228,9 @@ GLuint compile_shaders(void)
 
 
 	glAttachShader(program, vertex_shader);
-	glAttachShader(program, fragment_shader);
+	glAttachShader(program, tess_control_shader);
+	glAttachShader(program, tess_evaluation_shader);
+	// glAttachShader(program, fragment_shader);
 	glLinkProgram(program);
 
 	// delete the shaders as the program has them now
