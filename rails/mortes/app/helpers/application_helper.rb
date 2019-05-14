@@ -1,14 +1,16 @@
 module ApplicationHelper
+
+  require 'csv'
+  require 'json'
+
     def hello_world
      "Hello, World"
   end
 
+
     def series_a
-      {
-        "1993": 1030,
-        "1994": "5000",
-        "2000": "12"
-      }
+      data = File.open('../mortes/data/FEM2010.csv').read
+      CSV.parse(data).to_json
     end
 
     def series_b
