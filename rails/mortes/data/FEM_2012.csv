@@ -1,0 +1,27 @@
+ Mortalidade - Brasil
+Óbitos p/Ocorrênc por Categoria CID-10 e Cor/raça
+Categoria CID-10: E14   Diabetes mellitus NE, G20   Doenc de Parkinson, I21   Infarto agudo do miocardio, X91   Agressao enforc estrangulamento sufocacao, X93   Agressao disparo de arma de fogo de mao, X94   Agressao disparo arma fogo de maior calibre, X95   Agressao disparo outr arma de fogo ou NE, X97   Agressao p/meio de fumaca fogo e chamas, X99   Agressao objeto cortante ou penetrante, Y00   Agressao p/meio de um objeto contundente, Y04   Agressao p/meio de forca corporal, Y09   Agressao p/meios NE, Y35   Intervencao legal, Y36   Operacoes de guerra
+Sexo: Fem
+Período:2012
+"Categoria CID-10";"Branca";"Preta";"Amarela";"Parda";"Indígena";"Ignorado";"Total"
+"E14   Diabetes mellitus NE";13826;2541;182;9363;47;1618;27577
+"G20   Doenc de Parkinson";1045;43;11;185;2;48;1334
+"I21   Infarto agudo do miocardio";19116;2620;202;11097;44;1523;34602
+"X91   Agressao enforc estrangulamento sufocacao";113;18;-;163;3;11;308
+"X93   Agressao disparo de arma de fogo de mao";111;13;-;117;-;9;250
+"X94   Agressao disparo arma fogo de maior calibre";5;-;-;15;-;-;20
+"X95   Agressao disparo outr arma de fogo ou NE";588;174;1;1174;2;123;2062
+"X97   Agressao p/meio de fumaca fogo e chamas";27;4;1;23;-;5;60
+"X99   Agressao objeto cortante ou penetrante";422;95;1;688;6;48;1260
+"Y00   Agressao p/meio de um objeto contundente";127;29;1;185;2;12;356
+"Y04   Agressao p/meio de forca corporal";26;2;-;40;1;2;71
+"Y09   Agressao p/meios NE";69;24;-;84;22;12;211
+"Y35   Intervencao legal";5;-;-;3;-;2;10
+"Total";35480;5563;399;23137;129;3413;68121
+ Fonte: MS/SVS/CGIAE - Sistema de Informações sobre Mortalidade - SIM
+ Nota:
+ 
+ Em 2011, houve uma mudança no conteúdo da Declaração de Óbito, com maior detalhamento das informações coletadas. Para este ano, foram
+ utilizados simultaneamente os dois formulários. Para mais detalhes sobre as mudanças ocorridas e os seus efeitos, veja o documento
+ "Sistema de Informações sobre Mortalidade - SIM. Consolidação da base de dados de 2011".
+ 
