@@ -1,0 +1,15 @@
+"Categoria CID-10","Branca","Preta","Amarela","Parda","Indigena","Ignorado","Total"
+"E14   Diabetes mellitus NE",13804,2450,156,9372,46,1516,27344
+"G20   Doenc de Parkinson",1068,26,12,204,-,58,1368
+"I21   Infarto agudo do miocardio",19697,2722,193,11267,62,1486,35427
+"X91   Agressao enforc estrangulamento sufocacao",117,22,3,131,2,15,290
+"X93   Agressao disparo de arma de fogo de mao",110,15,-,95,-,3,223
+"X94   Agressao disparo arma fogo de maior calibre",9,2,-,9,-,2,22
+"X95   Agressao disparo outr arma de fogo ou NE",583,132,5,1216,4,138,2078
+"X97   Agressao p/meio de fumaca fogo e chamas",29,4,1,37,-,3,74
+"X99   Agressao objeto cortante ou penetrante",414,92,2,642,5,49,1204
+"Y00   Agressao p/meio de um objeto contundente",139,29,2,199,1,11,381
+"Y04   Agressao p/meio de forca corporal",30,4,-,35,3,5,77
+"Y09   Agressao p/meios NE",84,28,-,103,30,9,254
+"Y35   Intervencao legal",-,1,-,5,-,1,7
+"Total",36084,5527,374,23315,153,3296,68749
