@@ -3,58 +3,6 @@ module ApplicationHelper
   require 'csv'
   require 'json'
  
-    def hello_world
-     "Hello, World"
-  end
- 
-    def series_a
-#      data = File.open('../persefoni/data/FEM2010.csv').read
-#      CSV.parse(data).to_json
-    end
- 
-#    def series_b
-#      {
-#        "1993": 134,
-#        "2005": "42",
-#        "2006": "13"
-#      }
-#    end
-
-#    def series_b
-#      lol = {"test" => []}
-#      lol["test"].push({"Ano" => "12", "moscas" => "1"})
-#      lol["test"].push({"Ano" => "15", "moscas" => "13"})
-#      
-#      lol2 = []
-#      lol2.push({"2001" => 1})
-#      lol2.push({"2002" => 7})
-#
-#      za = {"test" => []}
-#      za["test"].push({"lol" => 23})
-#      za["test"].push({"lol1" => 223})
-#
-#      ba = []
-#      ba.push("2001" => 1)
-#      ba.push("2007" => 15)
-#
-#      be = { "2001" => []}
-#      be["2001"].push("test" => 14)
-#      be["2001"].push("gwlo" => 15)
-#      be["2001"].push("fef" => 17)
-#
-#      # car = {"2001" => 13, "2002" => 14}
-#      car = {}
-##      car["2001"] = 20
-#      car["2002"] = 120
-#      car["2003"] = 90
-#      car["2004"] = 80
-#      car["2005"] = 112
-#      car["2006"] = 415
-#      car["2007"] = 300
-#
-#      return car
-#    end
-
 class Dictionary
   def initialize
     @hash = {}
@@ -73,20 +21,84 @@ class Dictionary
      @hash.keys
   end
 end
+  def hello_world
+    init
+    return "lol"
+  end
+ 
 
-def series_b
-  data1 = Dictionary.new
-  Dir["../persefoni/data/*.csv"].select { |f| File.file? f
+def init
+    @data1 = Dictionary.new
+    @data2 = Dictionary.new
+    @data3 = Dictionary.new
+    @data4 = Dictionary.new
+    @data5 = Dictionary.new
+    @data6 = Dictionary.new
+    @data_brasil = Dictionary.new
+
+  Dir["../persefoni/data/F*.csv"].select { |f| File.file? f
                         data = File.open(f).read
                         data = CSV.parse(data, headers: true)
 
-                        data1.add((f.gsub(/[^0-9]/, '')) => data[0]["Branca"].to_i)
+                        @data1.add((f.gsub(/[^0-9]/, '')) => data[0]["Branca"].to_i/1000)
+                        @data2.add((f.gsub(/[^0-9]/, '')) => data[6]["Branca"].to_i/1000)
+                        @data3.add((f.gsub(/[^0-9]/, '')) => data[0]["Parda"].to_i/1000)
+                        @data4.add((f.gsub(/[^0-9]/, '')) => data[6]["Parda"].to_i/1000)
   }
 
-  return data1.entries
+  Dir["../persefoni/data/M*.csv"].select { |f| File.file? f
+                        data = File.open(f).read
+                        data = CSV.parse(data, headers: true)
 
+                        @data5.add((f.gsub(/[^0-9]/, '')) => data[2]["Parda"].to_i/1000)
+                        @data6.add((f.gsub(/[^0-9]/, '')) => data[6]["Parda"].to_i/1000)
+  }
 end
 
-    
+def br_diabetes
+  return @data1.entries
+end
 
+def br_arma
+  return @data2.entries
+end
+
+def pa_diabetes
+  return @data3.entries
+end
+
+def pa_arma
+  return @data4.entries
+end
+
+def pa_infarto
+  return @data5.entries
+end
+
+def pa_disparo
+  return @data6.entries
+end
+
+def brasil
+
+# pop brasileira
+# 2010 -> 196.8
+# 2011 -> 198.6
+# 2012 -> 200.5
+# 2013 -> 202.4
+# 2014 -> 204.2
+# 2015 -> 205.9
+# 2016 -> 207.6
+
+  @data_brasil.add("2010" => 1967963.0/100000)
+  @data_brasil.add("2011" => 1986867.0/100000)
+  @data_brasil.add("2012" => 2005610.0/100000)
+  @data_brasil.add("2013" => 2024086.0/100000)
+  @data_brasil.add("2014" => 2042131.0/100000)
+  @data_brasil.add("2015" => 2059621.0/100000)
+  @data_brasil.add("2016" => 2076529.0/100000)
+
+  return @data_brasil.entries
+
+end
 end

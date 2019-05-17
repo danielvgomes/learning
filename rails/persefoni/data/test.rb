@@ -42,30 +42,30 @@ p lol[12]["Categoria CID-10"] # intervencao legal
 p "##"
 
 p lol[0]["Parda"]
-# p lol[1]["Parda"]
+p lol[1]["Parda"]
 p lol[2]["Parda"]
-#p lol[3]["Parda"]
-#p lol[4]["Parda"]
-#p lol[5]["Parda"]
+p lol[3]["Parda"]
+p lol[4]["Parda"]
+p lol[5]["Parda"]
 p lol[6]["Parda"]
-#p lol[7]["Parda"]
+p lol[7]["Parda"]
 p lol[8]["Parda"]
-#p lol[9]["Parda"]
-#p lol[10]["Parda"]
-#p lol[11]["Parda"]
-#p lol[12]["Parda"]
+p lol[9]["Parda"]
+p lol[10]["Parda"]
+p lol[11]["Parda"]
+p lol[12]["Parda"]
 
 
 
 data1 = Dictionary.new
 
-Dir["*.csv"].select { |f| File.file? f
+Dir["M*.csv"].select { |f| File.file? f
   data = File.open(f).read
   data = CSV.parse(data, headers: true)
 
 #  data1 = 
 # data1 = [f.gsub(/[^0-9]/, '')] = data[0]["Branca"]
-  data1.add((f.gsub(/[^0-9]/, '')) => data[0]["Branca"].to_i)
+  data1.add((f.gsub(/[^0-9]/, '')) => data[0]["Parda"].to_i)
 
 
 }
@@ -81,3 +81,12 @@ car["2001"] = 20
 car["2002"] = 199
 
 p car
+
+# pop brasileira
+# 2010 -> 196.8
+# 2011 -> 198.6
+# 2012 -> 200.5
+# 2013 -> 202.4
+# 2014 -> 204.2
+# 2015 -> 205.9
+# 2016 -> 207.6

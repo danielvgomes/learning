@@ -1,9 +1,19 @@
 <h1>Welcome#index</h1>
 <p>Me acha aqui ->  app/views/welcome/index.html.erb</p>
  
-<%= line_chart [
-  {name: "Series A", data: series_a},
-  {name: "Series B", data: series_b}
-] %>
- 
 <%= hello_world %>
+<%= line_chart [
+  {name: "Branca Diabetes", data: br_diabetes},
+  {name: "Branca Arma", data: br_arma},
+  {name: "Parda Diabetes", data: pa_diabetes},
+  {name: "Parda Arma", data: pa_arma}
+] %>
+
+
+
+<p>Agora Pardos Infarto vs Disparo</p>
+<%= line_chart [
+  {name: "Pardo Infarto", data: pa_infarto},
+  {name: "Pardo Disparo", data: pa_disparo},
+  {name: "Populacao Brasileira", data: brasil}
+] %>
