@@ -120,7 +120,6 @@ GLuint compile_shaders(void)
 		"#version 430 core								\n"
 		"										\n"
 		"layout (location = 0) in vec4 offset;						\n"
-		"layout (location = 1) in vec4 color;						\n"
 		"out vec4 vs_color;								\n"
 		"										\n"
 		"void main(void)								\n"
@@ -128,13 +127,12 @@ GLuint compile_shaders(void)
 		"	const vec4 vertices[3] = vec4[3](vec4( 0.25, -0.25, 0.5, 1.0),		\n"
 		"					 vec4(-0.25, -0.25, 0.5, 1.0),		\n"
 		"					 vec4( 0.25,  0.25, 0.5, 1.0));		\n"
-		"										\n"
 		"	const vec4 colors[] = vec4[3](vec4( 1.0, 0.0, 0.0, 1.0),		\n"
-		"				       vec4( 0.0, 1.0, 0.0, 1.0),		\n"
-		"				       vec4( 0.0, 0.0, 1.0, 1.0));		\n"
+		"				      vec4( 0.0, 1.0, 0.0, 1.0),		\n"
+		"				      vec4( 0.0, 0.0, 1.0, 1.0));		\n"
 		"										\n"
 		"	gl_Position = vertices[gl_VertexID] + offset;				\n"
-		"	vs_color = color[gl_VertexID];						\n"
+		"	vs_color = colors[gl_VertexID];						\n"
 		"}										\n"
 	};
 
@@ -172,7 +170,7 @@ GLuint compile_shaders(void)
 	}
 
 	glAttachShader(program, vertex_shader);
- 	glAttachShader(program, fragment_shader);
+	glAttachShader(program, fragment_shader);
 	glLinkProgram(program);
 
 	// delete the shaders as the program has them now
@@ -182,7 +180,6 @@ GLuint compile_shaders(void)
 	return program;
 
 }
-
 
 void startup()
 {
@@ -197,4 +194,3 @@ void shutdown()
 	glDeleteProgram(rendering_program);
 	glDeleteVertexArrays(1, &vertex_array_object);
 }
-
