@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Old Lady's Game", "Old Lady's Game.csproj", "{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	Release|Any CPU = Release|Any CPU
+	Tools|Any CPU = Tools|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}.Tools|Any CPU.ActiveCfg = Tools|Any CPU
+		{ABA54C77-BD2A-4CD4-A83D-087025FBF46F}.Tools|Any CPU.Build.0 = Tools|Any CPU
+	EndGlobalSection
+EndGlobal

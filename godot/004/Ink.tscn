@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://art/player2_1.png" type="Texture" id=1]
+
+[node name="Ink" type="RigidBody2D"]
+gravity_scale = 0.0
+
+[node name="Cray" type="Sprite" parent="."]
+texture = ExtResource( 1 )

@@ -1,0 +1,6 @@
+E:\workspace\learning\godot\004\.mono\temp\obj\Tools\Old Lady's Game.csprojAssemblyReference.cache
+E:\workspace\learning\godot\004\.mono\temp\obj\Tools\Old Lady's Game.csproj.CoreCompileInputs.cache
+E:\workspace\learning\godot\004\.mono\temp\bin\Tools\Old Lady's Game.dll
+E:\workspace\learning\godot\004\.mono\temp\bin\Tools\Old Lady's Game.pdb
+E:\workspace\learning\godot\004\.mono\temp\obj\Tools\Old Lady's Game.dll
+E:\workspace\learning\godot\004\.mono\temp\obj\Tools\Old Lady's Game.pdb

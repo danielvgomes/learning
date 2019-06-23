@@ -1,0 +1,6 @@
+E:\workspace\learning\godot\003\.mono\temp\bin\Tools\Dodge the Feminists.dll
+E:\workspace\learning\godot\003\.mono\temp\bin\Tools\Dodge the Feminists.pdb
+E:\workspace\learning\godot\003\.mono\temp\obj\Tools\Dodge the Feminists.csprojAssemblyReference.cache
+E:\workspace\learning\godot\003\.mono\temp\obj\Tools\Dodge the Feminists.csproj.CoreCompileInputs.cache
+E:\workspace\learning\godot\003\.mono\temp\obj\Tools\Dodge the Feminists.dll
+E:\workspace\learning\godot\003\.mono\temp\obj\Tools\Dodge the Feminists.pdb

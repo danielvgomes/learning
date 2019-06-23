@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Area2D.cs" type="Script" id=1]
+[ext_resource path="res://Ink.tscn" type="PackedScene" id=2]
+[ext_resource path="res://art/notebook3.png" type="Texture" id=3]
+[ext_resource path="res://font/charlotte.ttf" type="DynamicFontData" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 42
+font_data = ExtResource( 4 )
+
+[sub_resource type="DynamicFont" id=2]
+size = 20
+font_data = ExtResource( 4 )
+
+[node name="Stage" type="Area2D"]
+script = ExtResource( 1 )
+ink = ExtResource( 2 )
+
+[node name="Panel" type="Panel" parent="."]
+margin_right = 400.0
+margin_bottom = 400.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Sprite" type="Sprite" parent="Panel"]
+position = Vector2( 200, 250 )
+texture = ExtResource( 3 )
+
+[node name="Title" type="Label" parent="Panel"]
+anchor_right = 1.0
+margin_top = 185.0
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0.686275, 0.996078, 1 )
+text = "old lady's game"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Message" type="Label" parent="Panel"]
+margin_top = 435.0
+margin_right = 400.0
+margin_bottom = 455.0
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0.686275, 0.996078, 1 )
+text = "(find helpful comments here)"
+align = 1
+valign = 1
