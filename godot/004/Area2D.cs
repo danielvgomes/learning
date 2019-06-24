@@ -8,12 +8,17 @@ public class Area2D : Godot.Area2D
 	private Random rand = new Random();
 	private int counter = 0;
 	private int[] game;
-	private int[,] available;
-	private int[,] wcs;
-	private int[] lmao;
-	private int[] playerMoves = {15, 15, 15, 15, 15, 15};
-	private int cnter = 0;
-	
+	// private int[] prov = new int[32];
+	private int[] available;
+	private int[] pMap = { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
+	private int[] cMap = { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
+	private int[] score = { 3, 1, 3, 1, 3, 1, 3, 1, 3};
+	int[,] Games = {{0,1,2}, {3,4,5}, {0,3,6}, {2,4,6}, {1,4,7}, {2,5,8}, {0,4,8}, {6,7,8}};
+	// private int[,] wcs;
+	// private int[] lmao;
+	private int[] playerMoves = new int[9];
+	private int movesCounter = 0;
+	private int movesCounter2 = 0;
 	private RigidBody2D boardInstance;
 	private RigidBody2D instance;
 	
@@ -91,7 +96,7 @@ public void gameInit()
 	// if (rand.Next(2) > 0) { playerStarts = true; } else { playerStarts = false; }
 	playerStarts = false;
 	// playerMoves = new int[9];
-	
+	/*
 		wcs = new int[3,8];
 		wcs[0,3] = wcs[0,0] = wcs[0,6] = 0;
 		wcs[1,3] = wcs[0,1] = 3;
@@ -102,7 +107,7 @@ public void gameInit()
 		wcs[0,5] = wcs[2,0] = wcs[0,7] = 2;
 		wcs[1,5] = wcs[2,1] = 5;
 		wcs[2,5] = wcs[2,2] = wcs[2,6] = 8;
-
+*/
 }
 
 public override void _Input(InputEvent @event)
@@ -114,12 +119,13 @@ public override void _Input(InputEvent @event)
 		{
 			case Status.Title:
 				playerStarts = !playerStarts;
-				GD.Print("Title!");
+				// GD.Print("** title");
 				// setMessage("Banana!");
 				showTitle();
 				hideMessage();
 				hideBoard();
 				resetBoard();
+				resetGame();
 				game = new int[9]; // the game itself, 9 squares for you to draw on... bitch
 				
 				if (playerStarts)
@@ -139,183 +145,54 @@ public override void _Input(InputEvent @event)
 				break;
 			
 			case Status.Computer:
+				score = scoreReset();
 				hideTitle();
 				showBoard();
-				GD.Print("Computer move!");
+				updateGame();
 				
-				// listar jogadas posssivel
-				int arrayDim = 0;
-				int cnt = 0;
+				// ADD RANDOM MOVE TO BOARD, WORKING! DONT TOUCH IT, IDIOT!
+				// if (available.Length != 0) { if (addMove(available[0], computerIs)) { status = Status.Player; } }
 				
-				for (int i = 0; i < game.Length; i++)
-				{
-					if (game[i] == 0) { arrayDim++; }
-					// GD.Print("game[" + i + "] == 0: ");
-					// GD.Print(game[i] == 0);
-				}
-				GD.Print("arrayDim = " + arrayDim);
-				available = new int[arrayDim,2];
-				for (int i = 0; i < 9; i++) { if (game[i] == 0) { available[cnt++,0] = i; } }
+				// atualizar score usando mapa computador
 				
-				/* 
-				if (available.Length != 0)
-				{
-					for (int i = 0; i < available.Length; i++) { GD.Print(available[i,0]); }
-					if (addMove(available[0,0], computerIs))
-					{
-						status = Status.Player;
-					}
-				}
-				*/
+				// ou seja, escolher apenas jogos que facam parte do mapa
+				
+				int[] gameResult = findGames(cMap);
+				score = scoreUpdate(score, gameResult);
+				gameResult = findGames(pMap);
+				score = scoreUpdate(score, gameResult);
+				
 				
 				// first score check for moves
-				int[] blerg = new int[available.GetLength(0)];
-				for (int i = 0; i < available.GetLength(0); i++)
-				{
-					blerg = convertToGroup(available[i,0]);
-					for (int f = 0; f < blerg.GetLength(0); f++)
-					{
-						if (blerg[f] == 1) { available[i,1]++; }
-					}
-				}
-				
-				GD.Print("### Bora printar FAMWE");
-				
-				for (int i = 0; i < game.Length; i++)
-				{
-					GD.Print(game[i]);
-				}
-				
-				GD.Print("############################");
-				GD.Print("Score for // normalized // moves:");
-				
-				for (int z = 0; z < available.GetLength(0); z++)
-				{
-					available[z,1] /= 3; // "normalize" scores
-					GD.Print("Move: " + available[z,0] + ", Score: " + available[z,1]);
-				}
-				
-				/*
-				 * list opponents moves
-				 */
-				
-				GD.Print("############################");
-				GD.Print("List of Opponent moves:");
-				
-				// O CODIGO ABAIXO E FRACASSATION
-				/*
-				arrayDim = 0;
-				cnt = 0;
-				
-				for (int i = 0; i < 9; i++) { if (game[i] != 0) { arrayDim++; } }
-				int[,] opMoves = new int[arrayDim,2];
-				for (int i = 0; i < 9; i++) { if (game[i] != 0) { opMoves[cnt++,0] = i; } }
-				
-				for (int i = 0; i < opMoves.GetLength(0); i++)
-				{
-					GD.Print("Moves -> " + opMoves[i,0]);
-				}
-				*/
-				int [,] opMoves = new int[playerMoves.Length,2];
-				
-				for (int i = 0; i < playerMoves.Length; i++)
-				{
-					if (playerMoves[i] != 15)
-					{
-						opMoves[i,0] = playerMoves[i];
-					}
-				}
-				
-				/*
-				 * list opGames, based on opMoves
-				 */
-				
-				/*
-				GD.Print("############################");
-				GD.Print("Listing opponent available game moves:");
-				
-				int[] opGamesHelo = new int[1];
-				
-				for (int r = 0; r < opMoves.GetLength(0); r++)
-				{
-					opGamesHelo = listOpGames(opMoves[r,0]);
-				}
-				
-				for (int i = 0; i < opGamesHelo.Length; i++) { GD.Print("-> " + opGamesHelo[i]); }
-				*/
-				/*
- 				 * change scores
-				 */
-				GD.Print("############################");
-				GD.Print("Listing avaialbledj moves again:");
-				for (int z = 0; z < available.GetLength(0); z++)
-				{
-					GD.Print("Move: " + available[z,0] + ", Score: " + available[z,1]);
-				}
-				
-				/*
-				for (int i = 0; i < opGamesHelo.Length; i++)
-				{
-					for (int j = 0; j < available.GetLength(0); j++)
-					{
-						if (opGamesHelo[i] == available[j,0]) { available[j,1] += 2; }
-					}
-				}
-				*/
-				/*
-				 * LAST FRONTIER
-				 */
-				
-				
-				// LIST PLAYER MOVES
-				GD.Print("LIST PLAYER MOVES");
-				for (int i = 0; i < playerMoves.Length; i++)
-				{
-					if (playerMoves[i] != 15) { GD.Print(playerMoves[i]); }
-				}
-				
-				
-				// FIND GAMES WITH TWO MOVES
 				
 				
 				
-				// ADD VERY HIGH SCORE TO THAT GAME!!! FOK
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				/*
-				 * FINALLY CHOOSE A MOVE BITCH
-				 */
+				 // FINALLY CHOOSE A MOVE BITCH
+				 
 				int test = 0; // minimum score
 				int count = 0;
 				
 				// find maximum value
-				for (int i = 0; i < available.GetLength(0); i++)
+				for (int i = 0; i < score.Length; i++)
 				{
-					if (available[i,1] > test) { test = available[i,1]; }
+					if (score[i] > test) { test = score[i]; }
 				}
 				
 				// count max values
-				for (int i = 0; i < available.GetLength(0); i++)
+				for (int i = 0; i < score.Length; i++)
 				{
-					if (available[i,1] == test) { count++; }
+					if (score[i] == test) { count++; }
 				}
+				
 				
 				// take all best moves == same values
 				
 				int[] go = new int[count];
 				count = 0;
 				
-				for (int i = 0; i < available.GetLength(0); i++)
+				for (int i = 0; i < score.Length; i++)
 				{
-					if (available[i,1] == test) { go[count++] = available[i,0]; }
+					if (score[i] == test) { go[count++] = i; }
 				}
 				
 				GD.Print("########### GAH TESTING THIS SHIT #########");
@@ -332,16 +209,18 @@ public override void _Input(InputEvent @event)
 				int meMove = rand.Next(go.Length);
 				GD.Print("my random sheep: " + meMove);
 				
-				if (addMove(go[rand.Next(go.Length)], computerIs))
+				int daMove = go[rand.Next(go.Length)];
+				
+				if (addMove(daMove, computerIs))
 				{
 					status = Status.Player;
+					cMap[movesCounter2++] = daMove;
 				}
-				
 				
 				/*
 				 * print out new score
 				 */
-				
+				/*
 				GD.Print("############################");
 				GD.Print("Updated scores after opp moves list:");
 				
@@ -349,30 +228,31 @@ public override void _Input(InputEvent @event)
 				{
 					GD.Print("Move: " + available[z,0] + ", Score: " + available[z,1]);
 				}
-
+				 ,0,
+				*/
+				updateGame();
+				
 				break;
 				
 			case Status.Player:
 				hideTitle();
 				showBoard();
-				GD.Print("Player move!");
+				updateGame();
+				score = scoreReset();
+				// GD.Print("** player move");
 				int fok = coordToSquares(GetViewport().GetMousePosition().x, GetViewport().GetMousePosition().y);
-				
 				if (addMove(fok, playerIs))
 				{
 					status = Status.Computer;
-					playerMoves[cnter++] = fok;
+					pMap[movesCounter++] = fok;
 				}
 				
-				for (int i = 0; i < playerMoves.Length; i++)
-				{
-					GD.Print("MOOOOOOVES: " + playerMoves[i]);
-				}
+				updateGame();
 				
 				break;
 				
 			case Status.End:
-				GD.Print("Game ended!");
+				// GD.Print("** game ended");
 				break;
 		}
 		
@@ -380,6 +260,131 @@ public override void _Input(InputEvent @event)
 	}
 }
 
+public void updateGame()
+{
+
+	available = initializeArray();
+	for (int i = 0; i < game.Length; i++)
+	{
+		if (game[i] == 0)
+		{
+			available[i] = i;
+		}
+	}
+available = trim(available);
+
+
+}
+
+public int[] scoreReset()
+{
+	score = new int[9];
+	return score;
+}
+
+public void resetGame()
+{
+	pMap = new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
+	cMap = new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
+	score = new int[] { 3, 1, 3, 1, 3, 1, 3, 1, 3};
+}
+
+public int[] findGames(int[] x)
+{
+	int c = 0;
+	int[] selection = {9, 9, 9, 9, 9, 9, 9, 9};
+	int[] resultMap = new int[9];
+	
+	for (int i = 0; i < x.Length; i++)
+	{
+		for (int k = 0; k < Games.GetLength(0); k++)
+		{
+			for (int l = 0; l < Games.GetLength(1); l++)
+			{
+				if (x[i] == Games[k,l]) { selection[c++] = k; } // 0, 4, 9, 9, 9, 9...
+			}
+		}
+	}
+	// print(selection, "SELECT");
+	
+	c = 0;
+	for (int i = 0; i < selection.Length; i++)
+	{
+		if (selection[i] != 9) // 0, 4
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				int n = selection[i]; // 0, 4
+				int m = Games[n, j]; // 0, 1, 2, 1, 4, 7
+				resultMap[m] += 1; // 1, 2, 1, 0, 1, 0, 0, 1, 0
+				// score map ->       3, 1, 3, 1, 3, 1, 3, 1, 3
+			}
+		}
+	}
+	return resultMap;
+}
+
+public int[] scoreUpdate(int[] score, int[] map)
+{
+	for (int i = 0; i < map.Length; i++)
+	{
+		if (map[i] > 0)
+		{
+			score[i] += 3;
+		}
+	}
+	return score;
+}
+
+
+public int[] zeroArray()
+{
+	int[] myArr = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	return myArr;
+}
+
+public int[] initializeArray()
+{
+	int[] myArr = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
+	return myArr;
+}
+
+public int[] trim(int[] x)
+{
+	int c = 0;
+	for (int i = 0; i < x.Length; i++) { if (x[i] != 15) { c++; } }
+	int[] prov = new int[c];
+	c = 0;
+	for (int i = 0; i < x.Length; i++) { if (x[i] != 15) { prov[c++] = x[i]; } }
+	return prov;
+}
+
+public int[] normalizeArray(int[] x)
+{
+	for (int i = 0; i < x.Length; i++)
+	{
+		x[i] = (x[i] - 15);
+	}
+	return x;
+}
+
+
+public void print(int[] x, string s)
+{
+	if (x == null) { return; }
+	GD.Print("** " + s + " printout **");
+	for (int i = 0; i < x.Length; i++) { GD.Print("**" + x[i]); }
+	GD.Print("** " + s + " printout **");
+}
+
+public void size(int[] x, string s)
+{
+	if (x == null) { return; }
+	GD.Print("** " + s + " size **");
+	GD.Print("** " + x.Length);
+	GD.Print("** " + s + " size **");
+}
+/*
 public int[] convertToGroup(int a)
 {
 	int[] groups = new int[8];
@@ -396,7 +401,8 @@ public int[] convertToGroup(int a)
 	}
 	return groups;
 }
-
+*/
+/*
 public int[] listOpGames(int a)
 {
 	int cnt = 0;
@@ -415,7 +421,7 @@ public int[] listOpGames(int a)
 			}
 		}
 	}
-	
+
 	int[] result = new int[cnt];
 	
 	// GD.Print("list of moves OP should try to make a game:");
@@ -426,8 +432,7 @@ public int[] listOpGames(int a)
 	}
 	return result;
 }
-
-
+*/
 public bool addMove(int square, int player)
 {
 	if (square == 9) { return false; }
@@ -535,5 +540,21 @@ public void showTitle()
 //  {
 //      
 //  }
+
+public override void _UnhandledInput(InputEvent @event)
+{
+    if (@event is InputEventKey eventKey)
+	{
+		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape)
+		{
+            // GetTree().Quit();
+			print(available, "available");
+			size(available, "available");
+			
+			print(score, "score");
+			size(score, "score");
+		}
+	}
+}
 
 }

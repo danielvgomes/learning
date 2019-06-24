@@ -1,0 +1,44 @@
+123
+234
+345
+456
+567
+
+1, 2, 3, 4, 5, 6, 7, 8
+
+- escolher o no. que aparece mais
+4
+
+- adversario joga
+5
+
+- remover jogos
+
+123, 234
+
+- escolher jogo que já tenha lance
+234
+
+#####################################################
+#####################################################
+#####################################################
+
+meuMapa = 999999999
+advMapa = 999999999
+
+lancesPossiveis = 012345678
+score = 313131313
+
+jogosPossiveis = 012, 345, 036, 246, 147, 258, 048, 678
+
+procurar jogos possiveis usando o mapa
+0
+
+procurar jogos possiveis usando mapa adversario
+012, 147
+
+atualizar score
+score = 797135353
+
+
+
