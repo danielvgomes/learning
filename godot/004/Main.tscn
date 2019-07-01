@@ -50,3 +50,15 @@ custom_colors/font_color = Color( 0, 0.686275, 0.996078, 1 )
 text = "(find helpful comments here)"
 align = 1
 valign = 1
+
+[node name="TitleTimer" type="Timer" parent="."]
+wait_time = 2.0
+
+[node name="MoveTimer" type="Timer" parent="."]
+wait_time = 0.5
+
+[node name="ComputerMoveTimer" type="Timer" parent="."]
+wait_time = 2.0
+[connection signal="timeout" from="TitleTimer" to="." method="onTitleTimerTimeout"]
+[connection signal="timeout" from="MoveTimer" to="." method="onMoveTimerTimeout"]
+[connection signal="timeout" from="ComputerMoveTimer" to="." method="onComputerMoveTimerTimeout"]

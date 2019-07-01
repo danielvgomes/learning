@@ -1,32 +1,31 @@
 using Godot;
 using System;
 using System.IO;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class Area2D : Godot.Area2D
 {
-	private Random rand = new Random();
-	private int counter = 0;
-	private int[] game;
-	// private int[] prov = new int[32];
-	private int[] available;
-	private int[] pMap = { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
-	private int[] cMap = { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
-	private int[] score = { 3, 1, 3, 1, 3, 1, 3, 1, 3};
-	int[,] Games = {{0,1,2}, {3,4,5}, {0,3,6}, {2,4,6}, {1,4,7}, {2,5,8}, {0,4,8}, {6,7,8}};
-	// private int[,] wcs;
-	// private int[] lmao;
-	private int[] playerMoves = new int[9];
-	private int movesCounter = 0;
-	private int movesCounter2 = 0;
 	private RigidBody2D boardInstance;
 	private RigidBody2D instance;
 	
 	private bool playerStarts;
+	private bool controlsEnabled;
+	private bool moveEnabled;
 	private int playerIs;
 	private int computerIs;
+	private Random rand = new Random();
 	
-	private enum Status {
+	public Moves pMoves;
+    public Moves cMoves;
+	public Moves availableMoves;
+	public MoveGenerator mg;
+ 	public GameCollection games;
+	
+	
+	
+	public enum Status {
 		Title,
 		Player,
 		Computer,
@@ -74,369 +73,130 @@ public class Area2D : Godot.Area2D
 		}
 		dir.ListDirEnd();
 		
-		// bora instanciar
-		boardInstance = ink.Instance() as RigidBody2D;
-		gameInit();
-    }
-	
-public void gameInit()
-{
-	// bora configurar
-	resetBoard();
+	// bora instanciar
+	boardInstance = ink.Instance() as RigidBody2D;
 	
 	Vector2 myPos = new Vector2(190, 250);
 	boardInstance.Position = myPos;
 	
-	hideBoard();
-	hideMessage();
 	AddChild(boardInstance);
 	
-	status = Status.Title;
+	controlsEnabled = false;
 	
-	// if (rand.Next(2) > 0) { playerStarts = true; } else { playerStarts = false; }
-	playerStarts = false;
-	// playerMoves = new int[9];
-	/*
-		wcs = new int[3,8];
-		wcs[0,3] = wcs[0,0] = wcs[0,6] = 0;
-		wcs[1,3] = wcs[0,1] = 3;
-		wcs[2,3] = wcs[0,2] = wcs[2,7] = 6;
-		wcs[0,4] = wcs[1,0] = 1;
-		wcs[1,4] = wcs[1,1] = wcs[1,6] = wcs[1,7] = 4;
-		wcs[2,4] = wcs[1,2] = 7;	
-		wcs[0,5] = wcs[2,0] = wcs[0,7] = 2;
-		wcs[1,5] = wcs[2,1] = 5;
-		wcs[2,5] = wcs[2,2] = wcs[2,6] = 8;
-*/
+	if (rand.Next(2) == 0) { playerStarts = true; } else { playerStarts = false; }
+	
+	moveEnabled = false;
+	
+	setStatus(Status.Title);
+}
+
+public void setStatus(Status s)
+{
+
+	switch (s)
+	{
+		case Status.Title:
+			setUpComputer();
+			GD.Print("starting timer");
+			GetNode<Timer>("TitleTimer").Start();
+			status = Status.Title;
+			GD.Print("status = Status.Title;");
+			// playerStarts = !playerStarts;
+			showTitle();
+			hideMessage();
+			hideBoard();
+			resetBoard();
+			if (playerStarts) { playerIs = 1; computerIs = 2; }
+			else { playerIs = 2; computerIs = 1; }
+		break;
+		case Status.Computer:
+			moveEnabled = false;
+			setMessage("computer to move");
+			showMessage();
+			status = Status.Computer;
+			GD.Print("status = Status.Computer;");
+			hideTitle();
+			// hideMessage();
+			showBoard();
+			GetNode<Timer>("ComputerMoveTimer").SetWaitTime((float)rand.NextDouble());
+			GetNode<Timer>("ComputerMoveTimer").Start();
+		break;
+				
+		case Status.Player:
+			GetNode<Timer>("MoveTimer").Start();
+			setMessage("player to move");
+			showMessage();
+			// moveEnabled = true;
+			status = Status.Player;
+			GD.Print("status = Status.Player;");
+			hideTitle();
+			// hideMessage();
+			showBoard();
+		break;
+				
+		case Status.End:
+			status = Status.End;
+			hideTitle();
+			hideMessage();
+			hideBoard();
+			GD.Print("status = Status.End;");
+		break;
+	}
+}
+
+public void setUpComputer()
+{
+	pMoves = new Moves();
+    cMoves = new Moves();
+	availableMoves = new Moves();
+	mg = new MoveGenerator();
+ 
+	games = new GameCollection(new Game(0, 1, 2), new Game(3, 4, 5), new Game(0, 3, 6), new Game(2, 4, 6),
+												new Game(1, 4, 7), new Game(2, 5, 8), new Game(0, 4, 8), new Game(6, 7, 8));
+ 
+	availableMoves = games.toMoveArray();
+}
+
+
+public override void _Process(float delta)
+{
+    if (Input.IsActionPressed("ui_right"))
+    {
+    }
 }
 
 public override void _Input(InputEvent @event)
 {
-	// var scene = ResourceLoader.Load("Circulo.tscn") as PackedScene;
-    if (@event is InputEventMouseButton eventMouseButton)
+	if (@event is InputEventMouseButton eventMouseButton && controlsEnabled)
 	{
-		switch (status)
+		if (status == Status.Title)
 		{
-			case Status.Title:
-				playerStarts = !playerStarts;
-				// GD.Print("** title");
-				// setMessage("Banana!");
-				showTitle();
-				hideMessage();
-				hideBoard();
-				resetBoard();
-				resetGame();
-				game = new int[9]; // the game itself, 9 squares for you to draw on... bitch
-				
-				if (playerStarts)
-				{
-					status = Status.Player;
-					playerIs = 1;
-					computerIs = 2;
-				}
-				else
-				{
-					status = Status.Computer;
-					playerIs = 2;
-					computerIs = 1;
-				
-				}
-				
-				break;
-			
-			case Status.Computer:
-				score = scoreReset();
-				hideTitle();
-				showBoard();
-				updateGame();
-				
-				// ADD RANDOM MOVE TO BOARD, WORKING! DONT TOUCH IT, IDIOT!
-				// if (available.Length != 0) { if (addMove(available[0], computerIs)) { status = Status.Player; } }
-				
-				// atualizar score usando mapa computador
-				
-				// ou seja, escolher apenas jogos que facam parte do mapa
-				
-				int[] gameResult = findGames(cMap);
-				score = scoreUpdate(score, gameResult);
-				gameResult = findGames(pMap);
-				score = scoreUpdate(score, gameResult);
-				
-				
-				// first score check for moves
-				
-				
-				
-				 // FINALLY CHOOSE A MOVE BITCH
-				 
-				int test = 0; // minimum score
-				int count = 0;
-				
-				// find maximum value
-				for (int i = 0; i < score.Length; i++)
-				{
-					if (score[i] > test) { test = score[i]; }
-				}
-				
-				// count max values
-				for (int i = 0; i < score.Length; i++)
-				{
-					if (score[i] == test) { count++; }
-				}
-				
-				
-				// take all best moves == same values
-				
-				int[] go = new int[count];
-				count = 0;
-				
-				for (int i = 0; i < score.Length; i++)
-				{
-					if (score[i] == test) { go[count++] = i; }
-				}
-				
-				GD.Print("########### GAH TESTING THIS SHIT #########");
-				
-				for (int i = 0; i < go.Length; i++)
-				{
-					GD.Print("Best moves: " + go[i]);
-				}
-				
-				/*
-				 * AND MOVE IT!
-				 */
-				
-				int meMove = rand.Next(go.Length);
-				GD.Print("my random sheep: " + meMove);
-				
-				int daMove = go[rand.Next(go.Length)];
-				
-				if (addMove(daMove, computerIs))
-				{
-					status = Status.Player;
-					cMap[movesCounter2++] = daMove;
-				}
-				
-				/*
-				 * print out new score
-				 */
-				/*
-				GD.Print("############################");
-				GD.Print("Updated scores after opp moves list:");
-				
-				for (int z = 0; z < available.GetLength(0); z++)
-				{
-					GD.Print("Move: " + available[z,0] + ", Score: " + available[z,1]);
-				}
-				 ,0,
-				*/
-				updateGame();
-				
-				break;
-				
-			case Status.Player:
-				hideTitle();
-				showBoard();
-				updateGame();
-				score = scoreReset();
-				// GD.Print("** player move");
-				int fok = coordToSquares(GetViewport().GetMousePosition().x, GetViewport().GetMousePosition().y);
-				if (addMove(fok, playerIs))
-				{
-					status = Status.Computer;
-					pMap[movesCounter++] = fok;
-				}
-				
-				updateGame();
-				
-				break;
-				
-			case Status.End:
-				// GD.Print("** game ended");
-				break;
+			if (playerStarts) { setStatus(Status.Player); }
+			else { setStatus(Status.Computer); }
+			return;
 		}
 		
-		GD.Print(boardInstance == null);
-	}
-}
-
-public void updateGame()
-{
-
-	available = initializeArray();
-	for (int i = 0; i < game.Length; i++)
-	{
-		if (game[i] == 0)
+		if (moveEnabled && status == Status.Player)
 		{
-			available[i] = i;
-		}
-	}
-available = trim(available);
-
-
-}
-
-public int[] scoreReset()
-{
-	score = new int[9];
-	return score;
-}
-
-public void resetGame()
-{
-	pMap = new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
-	cMap = new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9}; // squares, NOT A MAP
-	score = new int[] { 3, 1, 3, 1, 3, 1, 3, 1, 3};
-}
-
-public int[] findGames(int[] x)
-{
-	int c = 0;
-	int[] selection = {9, 9, 9, 9, 9, 9, 9, 9};
-	int[] resultMap = new int[9];
-	
-	for (int i = 0; i < x.Length; i++)
-	{
-		for (int k = 0; k < Games.GetLength(0); k++)
-		{
-			for (int l = 0; l < Games.GetLength(1); l++)
+			int square = coordToSquares(GetViewport().GetMousePosition().x, GetViewport().GetMousePosition().y);
+			if (addMove(square, playerIs))
 			{
-				if (x[i] == Games[k,l]) { selection[c++] = k; } // 0, 4, 9, 9, 9, 9...
+				setStatus(Status.Computer);
 			}
 		}
 	}
-	// print(selection, "SELECT");
-	
-	c = 0;
-	for (int i = 0; i < selection.Length; i++)
-	{
-		if (selection[i] != 9) // 0, 4
-		{
-			for (int j = 0; j < 3; j++)
-			{
-				int n = selection[i]; // 0, 4
-				int m = Games[n, j]; // 0, 1, 2, 1, 4, 7
-				resultMap[m] += 1; // 1, 2, 1, 0, 1, 0, 0, 1, 0
-				// score map ->       3, 1, 3, 1, 3, 1, 3, 1, 3
-			}
-		}
-	}
-	return resultMap;
 }
 
-public int[] scoreUpdate(int[] score, int[] map)
-{
-	for (int i = 0; i < map.Length; i++)
-	{
-		if (map[i] > 0)
-		{
-			score[i] += 3;
-		}
-	}
-	return score;
-}
-
-
-public int[] zeroArray()
-{
-	int[] myArr = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-	return myArr;
-}
-
-public int[] initializeArray()
-{
-	int[] myArr = {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15};
-	return myArr;
-}
-
-public int[] trim(int[] x)
-{
-	int c = 0;
-	for (int i = 0; i < x.Length; i++) { if (x[i] != 15) { c++; } }
-	int[] prov = new int[c];
-	c = 0;
-	for (int i = 0; i < x.Length; i++) { if (x[i] != 15) { prov[c++] = x[i]; } }
-	return prov;
-}
-
-public int[] normalizeArray(int[] x)
-{
-	for (int i = 0; i < x.Length; i++)
-	{
-		x[i] = (x[i] - 15);
-	}
-	return x;
-}
-
-
-public void print(int[] x, string s)
-{
-	if (x == null) { return; }
-	GD.Print("** " + s + " printout **");
-	for (int i = 0; i < x.Length; i++) { GD.Print("**" + x[i]); }
-	GD.Print("** " + s + " printout **");
-}
-
-public void size(int[] x, string s)
-{
-	if (x == null) { return; }
-	GD.Print("** " + s + " size **");
-	GD.Print("** " + x.Length);
-	GD.Print("** " + s + " size **");
-}
-/*
-public int[] convertToGroup(int a)
-{
-	int[] groups = new int[8];
-		
-	for(int i=0; i < 8 ; i++)
-	{
-		for(int j=0; j < 3; j++)
-		{
-			if (wcs[j,i] == a)
-			{
-				groups[i]++;
-			}
-		}
-	}
-	return groups;
-}
-*/
-/*
-public int[] listOpGames(int a)
-{
-	int cnt = 0;
-	int[] groups = new int[32];
-		
-	for(int i=0; i<8; i++)
-	{
-		for(int j=0; j < 3; j++)
-		{
-			if (wcs[j,i] == a)
-			{
-				for (int h = 0; h < 3; h++)
-				{
-					if (wcs[h,i] != a) { groups[cnt++] = wcs[h,i]; }
-				}
-			}
-		}
-	}
-
-	int[] result = new int[cnt];
-	
-	// GD.Print("list of moves OP should try to make a game:");
-	for (int i = 0; i < cnt; i++)
-	{
-		result[i] = groups[i];
-		// GD.Print(result[i]);
-	}
-	return result;
-}
-*/
 public bool addMove(int square, int player)
 {
-	if (square == 9) { return false; }
-	if (game[square] != 0) { return false; }
+	if (square == -1) { return false; }
+	
+	IsAvailable iA = new IsAvailable(availableMoves);
+	bool test = iA.check(square);
+	if (test == false) { return false; }
+	
+	if ((playerStarts && player == 1) || (!playerStarts && player == 2)) { pMoves.add(square); availableMoves.remove(square); }
+	if ((playerStarts && player == 2) || (!playerStarts && player == 1)) { cMoves.add(square); availableMoves.remove(square); }
 	
 	instance = ink.Instance() as RigidBody2D;
 	
@@ -454,14 +214,12 @@ public bool addMove(int square, int player)
 	}
 	AddChild(instance);
 	squareList.Add(instance);
-	game[square] = player;
 	
 	return true;
 }
 
 public int coordToSquares(float x, float y)
 {
-	// GD.Print("x -> " + (int)x + ", y -> " + (int)y);
 	if (x >= 78 && x <= 155 && y >= 88 && y <= 200) { return 0; }
 	if (x >= 156 && x <= 230 && y >= 88 && y <= 200) { return 1; }
 	if (x >= 231 && x <= 310 && y >= 88 && y <= 200) { return 2; }
@@ -471,7 +229,7 @@ public int coordToSquares(float x, float y)
 	if (x >= 78 && x <= 155 && y >= 281 && y <= 370) { return 6; }
 	if (x >= 156 && x <= 230 && y >= 281 && y <= 370) { return 7; }
 	if (x >= 231 && x <= 310 && y >= 281 && y <= 370) { return 8; }
-	return 9;
+	return -1;
 }
 
 public Vector2 squareToCoords(int s)
@@ -548,13 +306,915 @@ public override void _UnhandledInput(InputEvent @event)
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape)
 		{
             // GetTree().Quit();
-			print(available, "available");
-			size(available, "available");
-			
-			print(score, "score");
-			size(score, "score");
+		}
+		
+		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Tab)
+		{
+		}
+		
+		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Left)
+		{
+			if (status == Status.Title) { setStatus(Status.End); return; }
+			if (status == Status.Player) { setStatus(Status.Title); return; }
+			if (status == Status.Computer) { setStatus(Status.Player); return; }
+			if (status == Status.End) { setStatus(Status.Computer); return; }
+		}
+		
+		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Right)
+		{
+			if (status == Status.Title) { setStatus(Status.Player); return; }
+			if (status == Status.Player) { setStatus(Status.Computer); return; }
+			if (status == Status.Computer) { setStatus(Status.End); return; }
+			if (status == Status.End) { setStatus(Status.Title); return; }
 		}
 	}
 }
+private void onTitleTimerTimeout()
+{
+	GD.Print("enabling controls");
+    controlsEnabled = true;
+	moveEnabled = false;
+	// setMessage("Click to start");
+	// showMessage();
+	GetNode<Timer>("TitleTimer").Stop();
+}
 
+private void onMoveTimerTimeout()
+{
+    moveEnabled = true;
+	GetNode<Timer>("MoveTimer").Stop();
+}
+
+private void onComputerMoveTimerTimeout()
+{
+    GetNode<Timer>("ComputerMoveTimer").Stop();
+	if (addMove(mg.getMove(games, pMoves, cMoves, availableMoves), computerIs))
+	{
+		setStatus(Status.Player);
+	}
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+public class IsAvailable
+{
+	Moves av;
+	
+	public IsAvailable(Moves available)
+	{
+		av = available;
+	}
+					   
+	public bool check(int m)
+	{
+		for (int i = 0; i < av.getMoves().Length; i++)
+		{
+			if (m == av.getMoves()[i]) { return true; }
+		}
+		return false;
+	}
+}
+
+
+public class MoveGenerator
+{
+    public int getMove(GameCollection games, Moves pMoves, Moves cMoves, Moves av)
+    {
+        Random r = new Random();
+        Moves finalM = new Moves();
+        IsAvailable iA = new IsAvailable(av);
+       
+        /*
+        * ####################################################################
+        * ####################################################################
+        * ####################################################################
+        */
+        if (cMoves.getMoves().Length + pMoves.getMoves().Length == 0) // Console.WriteLine("### 000 ###");
+        {
+            Moves z = games.toMoveMap();
+            for (int i = 0; i < 300; i++)
+            {
+                int mySelection = z.getMoves()[r.Next(z.getMoves().Length)];
+                if (iA.check(mySelection))
+                {
+                    Console.WriteLine("selected move: " + mySelection);
+                    return mySelection;
+                }
+                if (i >= 299) { Console.WriteLine("giving up"); }
+            }
+        }
+		
+        /*
+        * ####################################################################
+        * ####################################################################
+        * ####################################################################
+        */
+
+        if (cMoves.getMoves().Length == 0 && pMoves.getMoves().Length == 1) // Console.WriteLine("### 001 ###");
+        {
+            GameCollection mm = new GameCollection();
+			
+			int theMove;
+			theMove = pMoves.getMoves()[0];
+			
+            Index myIdenx = games.getIndexGameContains(theMove);
+			
+			Console.WriteLine("index -> " + myIdenx);
+			Console.WriteLine("games -> " + games);
+
+			bool skip = false;
+			
+            for (int i = 0; i < games.getSize(); i++)
+			{
+				for (int j = 0; j < myIdenx.getSize(); j++) { if (i == myIdenx.getIndexArray()[j]) { skip = true; }	}
+				if (skip) { skip = false; continue; }
+				mm.addGame(games.getGame(i));
+            }
+			
+			Console.WriteLine("selection -> " + mm);
+           
+            Moves z = mm.toMoveMap();
+            for (int i = 0; i < 300; i++)
+            {
+                int mySelection = z.getMoves()[r.Next(z.getMoves().Length)];
+                if (iA.check(mySelection))
+                {
+                    Console.WriteLine("selected move: " + mySelection);
+                    return mySelection;
+                }
+                if (i >= 299) { Console.WriteLine("giving up"); }
+            }
+        }
+       
+        /*
+        * ####################################################################
+        * ####################################################################
+        * ####################################################################
+        */
+        
+        if (cMoves.getMoves().Length + pMoves.getMoves().Length >= 3) // Console.WriteLine("### 002 ###");
+        {
+            Gen lol = new Gen();
+            
+            GameCollection p = new GameCollection();
+			GameCollection c = new GameCollection();
+			
+			GameCollection playerSelection = new GameCollection();
+			GameCollection computerSelection = new GameCollection();
+			
+            lol.combinations(pMoves.getMoves(), p);
+			lol.combinations(cMoves.getMoves(), c);
+            
+			Console.WriteLine("player combination: " + p);
+			Console.WriteLine("computer combination: " + c);
+           
+            // combinacoes prontas, pesquisar jogos
+            for (int i = 0; i < p.getSize(); i++)
+            {
+                int myIdenx = games.getIndexGameContains(p.getGame(i).getGameArray()[0], p.getGame(i).getGameArray()[1]);
+
+                if (myIdenx != -1)
+                {
+					playerSelection.addGame(games.getGame(myIdenx));
+                }
+            }
+			
+			for (int i = 0; i < c.getSize(); i++)
+            {
+                int myIdenx = games.getIndexGameContains(c.getGame(i).getGameArray()[0], c.getGame(i).getGameArray()[1]);
+
+                if (myIdenx != -1)
+                {
+					computerSelection.addGame(games.getGame(myIdenx));
+                }
+            }
+ 
+			Console.WriteLine("playerSelection = " + playerSelection);
+			Console.WriteLine("computerSelection = " + computerSelection);
+			
+			Console.WriteLine("playerSelection.toMoveArray = " + playerSelection.toMoveArray());
+			Console.WriteLine("computerSelection.toMoveArray = " + computerSelection.toMoveArray());
+			
+			if (computerSelection.getSize() > 0)
+			{
+				for (int i = 0; i < computerSelection.toMoveArray().getMoves().Length; i++)
+            	{
+                	int mySelection = computerSelection.toMoveArray().getMoves()[i];
+					Console.WriteLine("computer iA.check -> " + iA.check(mySelection));
+					Console.WriteLine("mySelection -> " + mySelection);
+                	if (iA.check(mySelection))
+                	{
+                    	return mySelection;
+                	}
+            	}
+			}
+
+			if (playerSelection.getSize() > 0)
+			{
+				for (int i = 0; i < playerSelection.toMoveArray().getMoves().Length; i++)
+            	{
+                	int mySelection = playerSelection.toMoveArray().getMoves()[i];
+					Console.WriteLine("player iA.check -> " + iA.check(mySelection));
+					Console.WriteLine("mySelection -> " + mySelection);
+                	if (iA.check(mySelection))
+                	{
+                    	return mySelection;
+                	}
+            	}
+			}
+			else
+			{
+				Console.WriteLine("foideus");
+			}
+
+			/*
+            for (int i = 0; i < computerSelection.toMoveArray().getMoves().Length; i++)
+            {
+                int mySelection = computerSelection.toMoveArray().getMoves()[i];
+                if (iA.check(mySelection))
+                {
+                    return mySelection;
+                }
+            }
+			*/
+        }
+		
+		Console.WriteLine("tudo errado.");
+		
+		/*
+        * ####################################################################
+        * ####################################################################
+        * ####################################################################
+        */
+
+        if (true) // last resort
+        {
+            GameCollection mm = new GameCollection();
+			
+			int theMove;
+			theMove = cMoves.getMoves()[0];
+			
+            Index myIdenx = games.getIndexGameContains(theMove);
+			
+			Console.WriteLine("index -> " + myIdenx);
+			Console.WriteLine("games -> " + games);
+			
+            for (int i = 0; i < games.getSize(); i++)
+			{
+				for (int j = 0; j < myIdenx.getSize(); j++)
+				{
+					if (i == myIdenx.getIndexArray()[j]) { mm.addGame(games.getGame(i)); }
+				}
+            }
+			
+			Console.WriteLine("selection -> " + mm);
+           
+            Moves z = mm.toMoveMap();
+            for (int i = 0; i < 300; i++)
+            {
+                int mySelection = z.getMoves()[r.Next(z.getMoves().Length)];
+                if (iA.check(mySelection))
+                {
+                    Console.WriteLine("selected move: " + mySelection);
+                    return mySelection;
+                }
+                if (i >= 299) { Console.WriteLine("giving up"); }
+            }
+		}
+		
+		// real last resort
+		if (true)
+		{
+			GameCollection mm = new GameCollection();
+			Console.WriteLine("Last Resort");
+			Console.WriteLine("Available moves -> " + av);
+			Console.WriteLine("Games -> " + games);
+			Console.WriteLine("cMoves -> " + cMoves);
+			Console.WriteLine("pMoves -> " + pMoves);
+				
+			GameCollection gaminhoLastResourt = new GameCollection();
+			GameCollection pGames = new GameCollection();
+			
+			for (int i = 0; i < cMoves.getMoves().Length; i++)
+			{
+				Index holyDog = games.getIndexGameContains(cMoves.getMoves()[i]);
+				for (int j = 0; j < holyDog.getIndexArray().Length; j++)
+				{
+					gaminhoLastResourt.addGame(games.getGame(holyDog.getIndexArray()[j]));
+				}
+			}
+
+			Console.WriteLine("gaminho -> " + gaminhoLastResourt.toMoveArray());
+			
+			if (gaminhoLastResourt.getSize() > 0)
+			{
+				for (int i = 0; i < gaminhoLastResourt.toMoveArray().getMoves().Length; i++)
+            	{
+                	int mySelection = gaminhoLastResourt.toMoveArray().getMoves()[i];
+						Console.WriteLine("player iA.check -> " + iA.check(mySelection));
+						Console.WriteLine("mySelection -> " + mySelection);
+                		if (iA.check(mySelection))
+                		{
+                    		return mySelection;
+                		}
+            	}
+			}
+			else
+			{
+				Console.WriteLine("foideus de novo, #semata");
+			}
+		}
+		
+        return -1;
+    }
+}
+
+		
+public class Gen
+{
+	public void combinations(int[] n, GameCollection x)
+	{
+		int k = 2;		
+		foreach (IEnumerable<int> i in Combinations(n, k))
+		{
+			x.addGame(new Game(i.ToArray()[0], i.ToArray()[1]));
+		}
+	}
+	
+	private static bool NextCombination(IList<int> num, int n, int k)
+      {
+         bool finished;
+ 
+         var changed = finished = false;
+ 
+         if (k <= 0) return false;
+ 
+         for (var i = k - 1; !finished && !changed; i--)
+         {
+            if (num[i] < n - 1 - (k - 1) + i)
+            {
+               num[i]++;
+ 
+               if (i < k - 1)
+                  for (var j = i + 1; j < k; j++)
+                     num[j] = num[j - 1] + 1;
+               changed = true;
+            }
+            finished = i == 0;
+         }
+ 
+         return changed;
+      }
+ 
+      private static IEnumerable Combinations<T>(IEnumerable<T> elements, int k)
+      {
+         var elem = elements.ToArray();
+         var size = elem.Length;
+ 
+         if (k > size) yield break;
+ 
+         var numbers = new int[k];
+ 
+         for (var i = 0; i < k; i++)
+            numbers[i] = i;
+ 
+         do
+         {
+            yield return numbers.Select(n => elem[n]);
+         } while (NextCombination(numbers, size, k));
+      }
+}
+
+ 
+public class Moves
+{
+    int c = 0;
+    int[] mv = new int[0];
+    int[] prov;
+   
+    public int[] getMoves()
+    {
+        return mv;
+    }
+   
+    public void add(int i)
+    {
+        c = mv.Length;
+        for (int t = 0; t < mv.Length; t++) { if (mv[t] == i) { return; } }
+        c++;
+        prov = mv; mv = new int[c];
+        for (int j = 0; j < prov.Length; j++) { mv[j] = prov[j]; }
+        mv[c-1] = i;
+    }
+	
+	    public void addKeepDupes(int i)
+    {
+        c = mv.Length;
+        c++;
+        prov = mv; mv = new int[c];
+        for (int j = 0; j < prov.Length; j++) { mv[j] = prov[j]; }
+        mv[c-1] = i;
+    }
+   
+    public void remove(int i)
+    {
+        bool found = false;
+        for (int j = 0; j < mv.Length; j++) { if (mv[j] == i) found = true; }
+        if (!found) return;
+       
+        c = mv.Length;
+        c--;
+        int counter = 0;
+        prov = mv; mv = new int[c];
+        for (int k = 0; k < prov.Length; k++)
+        {
+            if (prov[k] == i)
+            {
+                continue;
+            }
+           
+            mv[counter] = prov[k];
+            counter++;
+        }
+    }
+   
+    public override string ToString()
+    {
+        string myReturn = "";
+        myReturn += "[";
+        for (int i = 0; i < mv.Length; i++)
+        {
+            myReturn += mv[i];
+            if (i == mv.Length-1) { break; }
+            myReturn += ", ";
+        }
+        myReturn += "]";
+        return myReturn;
+    }
+}
+ 
+public class GameCollection
+{
+	int size = 0;
+    Game[] gameArray = {};
+    Game[] prov;
+   
+    public GameCollection(params Game[] g)
+    {
+        gameArray = g;
+    }
+   
+    public Game[] getArray()
+    {
+        return gameArray;
+    }
+   
+    public Moves toMoveArray()
+    {
+        Moves prov = new Moves();
+       
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            for (int j = 0; j < gameArray[i].getGameArray().Length; j++)
+            {
+                prov.add(gameArray[i].getGameArray()[j]);
+            }
+        }
+       
+        return prov;
+    }
+	
+	    public Moves toMoveMap()
+    {
+        Moves prov = new Moves();
+       
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            for (int j = 0; j < gameArray[i].getGameArray().Length; j++)
+            {
+                prov.addKeepDupes(gameArray[i].getGameArray()[j]);
+            }
+        }
+       
+        return prov;
+    }
+   
+	public void addGame(Game g)
+    {
+        size = gameArray.Length;
+        size++;
+        prov = gameArray;
+        gameArray = new Game[size];
+       
+        for (int i = 0; i < prov.Length; i++)
+        {
+            gameArray[i] = prov[i];
+        }
+        gameArray[prov.Length] = g;
+    }
+ 
+    public Game removeGame(int x)
+    {
+        Game prov = null;
+        if (x < 0) { return prov; }
+        Game[] newArray = new Game[(gameArray.Length-1)];
+        int c = 0;
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            if (i == x) { prov = gameArray[i]; continue; }
+            newArray[c] = gameArray[i];
+            c++;
+        }
+        gameArray = newArray;
+        return prov;
+    }
+ 
+    public Index getIndexGameContains(int m)
+    {
+        Index indexReturn = new Index();
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            if (gameArray[i].contains(m))
+            {
+                indexReturn.add(i);
+            }
+        }
+        return indexReturn;
+    }
+ 
+    public int getIndexGameContains(int m, int n)
+    {
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            if (gameArray[i].contains(m, n))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+   
+        public int getIndexGameContains(int m, int n, int o)
+    {
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            if (gameArray[i].contains(m, n, o))
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+ 
+    public Game getGame(int n)
+    {
+        return gameArray[n];
+    }
+ 
+    public int getSize()
+    {
+        return gameArray.Length;
+    }
+	
+	public override string ToString()
+    {
+        string myReturn = "";
+        for (int i = 0; i < gameArray.Length; i++)
+        {
+            myReturn += gameArray[i].ToString();
+            if (i == gameArray.Length - 1) { break; }
+            myReturn += ", ";
+        }
+        return myReturn;
+    }
+}
+ 
+public class Index
+{
+    int i = 0;
+    int[] id = new int[0];
+    int[] prov;
+	
+    public void add(int index)
+    {
+        i++;
+        prov = id;
+        id = new int[i];
+        for (int k = 0; k < prov.Length; k++) { id[k] = prov[k]; }
+        id[i-1] = index;
+    }
+   
+    public int[] getIndexArray()
+    {
+        return id;
+    }
+   
+    public int getSize()
+    {
+        return id.Length;
+    }
+   
+        public override string ToString()
+    {
+        string myReturn = "";
+        myReturn += "[";
+        for (int i = 0; i < id.Length; i++)
+        {
+            myReturn += id[i];
+            if (i == id.Length-1) { break; }
+            myReturn += ", ";
+        }
+        myReturn += "]";
+        return myReturn;
+    }
+   
+}
+
+public class Game
+{
+  		int[] game;
+	
+    public Game(int x, int y, int z)
+    {
+		game = new int[3];
+        game[0] = x;
+        game[1] = y;
+        game[2] = z;
+    }
+	
+	public Game(int x, int y)
+    {
+		game = new int[2];
+        game[0] = x;
+        game[1] = y;
+    }
+	
+    public bool contains(int n)
+    {
+        for (int i = 0; i < game.Length; i++)
+        {
+            if (game[i] == n) { return true; }
+        }
+        return false;
+    }
+ 
+        public bool contains(int m, int n)
+        {
+        int myReturn = 0;
+        for (int i = 0; i < game.Length; i++)
+            {
+                if (game[i] == n || game[i] == m) { myReturn++; }
+            }
+        if (myReturn == 2)
+            {
+                return true;
+            }
+                else
+            {
+                return false;
+            }
+        }
+   
+            public bool contains(int m, int n, int o)
+        {
+        int myReturn = 0;
+        for (int i = 0; i < game.Length; i++)
+            {
+                if (game[i] == n || game[i] == m || game[i] == o) { myReturn++; }
+            }
+        if (myReturn == 3)
+            {
+                return true;
+            }
+                else
+            {
+                return false;
+            }
+        }
+ 
+    public int[] getGameArray()
+    {
+        return game;
+    }
+ 
+    public bool find(int x)
+    {
+        for (int i = 0; i < game.Length; i++)
+        {
+            if (game[i] == x) { return true; }
+        }
+        return false;
+    }
+ 
+    public override string ToString()
+    {
+        string myReturn = "";
+        myReturn += "[";
+        for (int i = 0; i < game.Length; i++)
+        {
+            myReturn += game[i];
+            if (i == game.Length-1) { break; }
+            myReturn += ", ";
+        }
+        myReturn += "]";
+        return myReturn;
+    }
 }
