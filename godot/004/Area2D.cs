@@ -87,6 +87,7 @@ public class Area2D : Godot.Area2D
 	boardInstance.Position = myPos;
 	
 	AddChild(boardInstance);
+	AddChild(bictoryInstance);
 	
 	controlsEnabled = false;
 	
@@ -297,6 +298,13 @@ public void setBictory()
 		// instance.GetNode<Sprite>("Cray").Position = squareToCoords(square);
 		// boardInstance.GetNode<Sprite>("Cray").Texture = boardList[rand.Next(5)];
 		// bictory.GetNode<Sprite>("Bictory").Texture = "";
+		Vector2 myPos = new Vector2(190, 250);
+		bictoryInstance.Position = myPos;
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(8)];
+		bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
+		bictoryInstance.GetNode<Sprite>("Bictory").SetZIndex(1);
+		// this.GetNode<Panel>("Panel").GetNode<Sprite>("Sprite").Visible = false;
+		
 }
 
 public void hideTitle()
@@ -326,6 +334,7 @@ public override void _UnhandledInput(InputEvent @event)
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Tab)
 		{
+			setBictory();
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Left)
