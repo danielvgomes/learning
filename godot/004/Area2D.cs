@@ -9,6 +9,7 @@ public class Area2D : Godot.Area2D
 {
 	private RigidBody2D boardInstance;
 	private RigidBody2D instance;
+	private RigidBody2D bictoryInstance;
 	
 	private bool playerStarts;
 	private bool controlsEnabled;
@@ -18,10 +19,10 @@ public class Area2D : Godot.Area2D
 	private Random rand = new Random();
 	
 	public Moves pMoves;
-    public Moves cMoves;
+	public Moves cMoves;
 	public Moves availableMoves;
 	public MoveGenerator mg;
- 	public GameCollection games;
+	public GameCollection games;
 	
 	
 	
@@ -37,9 +38,13 @@ public class Area2D : Godot.Area2D
 	[Export]
 	public PackedScene ink;
 	
+	[Export]
+	public PackedScene bictory;
+	
 	List<Texture> boardList = new List<Texture>();
 	List<Texture> player2List = new List<Texture>();
 	List<Texture> player1List = new List<Texture>();
+	List<Texture> bictoryList = new List<Texture>();
 	List<RigidBody2D> squareList = new List<RigidBody2D>();
 	
 	Godot.Directory dir = new Godot.Directory();
@@ -57,17 +62,18 @@ public class Area2D : Godot.Area2D
 			if ((fileName.Contains("board")) && (!fileName.Contains(".import")))
 			{
 				boardList.Add((Texture)ResourceLoader.Load("res://art/" + fileName));
-				GD.Print("lol = " + fileName);
 			}
 			if ((fileName.Contains("player2")) && (!fileName.Contains(".import")))
 			{
 				player2List.Add((Texture)ResourceLoader.Load("res://art/" + fileName));
-				GD.Print("bol = " + fileName);
 			}
 			if ((fileName.Contains("player1")) && (!fileName.Contains(".import")))
 			{
 				player1List.Add((Texture)ResourceLoader.Load("res://art/" + fileName));
-				GD.Print("gez = " + fileName);
+			}
+			if ((fileName.Contains("bictory")) && (!fileName.Contains(".import")))
+			{
+				bictoryList.Add((Texture)ResourceLoader.Load("res://art/" + fileName));
 			}
 			fileName = dir.GetNext();
 		}
@@ -75,6 +81,7 @@ public class Area2D : Godot.Area2D
 		
 	// bora instanciar
 	boardInstance = ink.Instance() as RigidBody2D;
+	bictoryInstance = bictory.Instance() as RigidBody2D;
 	
 	Vector2 myPos = new Vector2(190, 250);
 	boardInstance.Position = myPos;
@@ -281,6 +288,15 @@ public void resetBoard()
 		x.QueueFree();
 	}
 	squareList = new List<RigidBody2D>();
+}
+
+public void setBictory()
+{
+		// instance.GetNode<Sprite>("Cray").Texture = player1List[rand.Next(5)];
+		// instance.GetNode<Sprite>("Cray").Scale = new Vector2(0.3f, 0.3f);
+		// instance.GetNode<Sprite>("Cray").Position = squareToCoords(square);
+		// boardInstance.GetNode<Sprite>("Cray").Texture = boardList[rand.Next(5)];
+		// bictory.GetNode<Sprite>("Bictory").Texture = "";
 }
 
 public void hideTitle()

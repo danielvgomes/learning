@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://art/old_ladys_hor_win_1.png" type="Texture" id=1]
+
+[node name="Bictory" type="RigidBody2D"]
+
+[node name="Cray" type="Sprite" parent="."]
+texture = ExtResource( 1 )
