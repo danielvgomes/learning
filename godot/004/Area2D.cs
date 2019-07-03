@@ -14,9 +14,11 @@ public class Area2D : Godot.Area2D
 	private bool playerStarts;
 	private bool controlsEnabled;
 	private bool moveEnabled;
+	private bool bictoryOrBeia;
 	private int playerIs;
 	private int computerIs;
 	private Random rand = new Random();
+	private hasBictory findWinningGames = new hasBictory();
 	
 	public Moves pMoves;
 	public Moves cMoves;
@@ -192,6 +194,11 @@ public override void _Input(InputEvent @event)
 				setStatus(Status.Computer);
 			}
 		}
+		if (bictoryOrBeia)
+		{
+			bictoryOrBeia = false;
+			setStatus(Status.Title);
+		}
 	}
 }
 
@@ -203,8 +210,26 @@ public bool addMove(int square, int player)
 	bool test = iA.check(square);
 	if (test == false) { return false; }
 	
-	if ((playerStarts && player == 1) || (!playerStarts && player == 2)) { pMoves.add(square); availableMoves.remove(square); }
-	if ((playerStarts && player == 2) || (!playerStarts && player == 1)) { cMoves.add(square); availableMoves.remove(square); }
+	/*
+	* ################################################################
+	* ################################################################
+	*/
+	
+	if ((playerStarts && player == 1) || (!playerStarts && player == 2))
+	{
+		pMoves.add(square); availableMoves.remove(square);
+		testBictory();
+	}
+	if ((playerStarts && player == 2) || (!playerStarts && player == 1))
+	{
+		cMoves.add(square); availableMoves.remove(square);
+		testBictory();
+	}
+	
+	/*
+	* ################################################################
+	* ################################################################
+	*/
 	
 	instance = ink.Instance() as RigidBody2D;
 	
@@ -291,20 +316,51 @@ public void resetBoard()
 	squareList = new List<RigidBody2D>();
 }
 
-public void setBictory()
+public void showBictory(int r)
 {
+	moveEnabled = false; GD.Print("moveEnabled -> " + moveEnabled);
+	// GD.Print("setBictory()");
 		// instance.GetNode<Sprite>("Cray").Texture = player1List[rand.Next(5)];
 		// instance.GetNode<Sprite>("Cray").Scale = new Vector2(0.3f, 0.3f);
 		// instance.GetNode<Sprite>("Cray").Position = squareToCoords(square);
 		// boardInstance.GetNode<Sprite>("Cray").Texture = boardList[rand.Next(5)];
 		// bictory.GetNode<Sprite>("Bictory").Texture = "";
-		Vector2 myPos = new Vector2(190, 250);
-		bictoryInstance.Position = myPos;
+		// Vector2 myPos = new Vector2(190, 250);
+		// Vector2 sum = new Vector2(10, 10);
+		Vector2 myPos = new Vector2(rand.Next(500), rand.Next(500));
+		bictoryInstance.GetNode<Sprite>("Bictory").Position = myPos;
 		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(8)];
 		bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
 		bictoryInstance.GetNode<Sprite>("Bictory").SetZIndex(1);
 		// this.GetNode<Panel>("Panel").GetNode<Sprite>("Sprite").Visible = false;
-		
+		// GD.Print(myPos);
+		// callBictory();
+}
+
+public void showVeia()
+{
+	GD.Print("DEU VEIA");
+	bictoryOrBeia = true;
+}
+
+public void testBictory()
+{
+	GD.Print("testBictory()");
+	int result = findWinningGames.doesIt(cMoves, pMoves, games);
+	GD.Print("BICTORY IS: " + result);
+	
+	if (result != -1)
+	{
+		bictoryOrBeia = true;
+		hideMessage();
+		GetNode<Timer>("EndTimer").Start();
+		showBictory(result);
+	}
+	
+	if ((cMoves.getMoves().Length + pMoves.getMoves().Length) >= 9)
+	{
+		showVeia();
+	}
 }
 
 public void hideTitle()
@@ -334,7 +390,7 @@ public override void _UnhandledInput(InputEvent @event)
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Tab)
 		{
-			setBictory();
+			// setBictory();
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Left)
@@ -366,7 +422,7 @@ private void onTitleTimerTimeout()
 
 private void onMoveTimerTimeout()
 {
-    moveEnabled = true;
+    if (!bictoryOrBeia) { moveEnabled = true; }
 	GetNode<Timer>("MoveTimer").Stop();
 }
 
@@ -377,6 +433,11 @@ private void onComputerMoveTimerTimeout()
 	{
 		setStatus(Status.Player);
 	}
+}
+
+private void onEndTimerTimeout()
+{
+    GD.Print("Terminou o fim");
 }
 
 
@@ -769,7 +830,7 @@ public class MoveGenerator
         * ####################################################################
         * ####################################################################
         */
-
+		
         if (true) // last resort
         {
             GameCollection mm = new GameCollection();
@@ -777,12 +838,12 @@ public class MoveGenerator
 			int theMove;
 			theMove = cMoves.getMoves()[0];
 			
-            Index myIdenx = games.getIndexGameContains(theMove);
+			Index myIdenx = games.getIndexGameContains(theMove);
 			
 			Console.WriteLine("index -> " + myIdenx);
 			Console.WriteLine("games -> " + games);
 			
-            for (int i = 0; i < games.getSize(); i++)
+			for (int i = 0; i < games.getSize(); i++)
 			{
 				for (int j = 0; j < myIdenx.getSize(); j++)
 				{
@@ -791,7 +852,7 @@ public class MoveGenerator
             }
 			
 			Console.WriteLine("selection -> " + mm);
-           
+			
             Moves z = mm.toMoveMap();
             for (int i = 0; i < 300; i++)
             {
@@ -804,7 +865,6 @@ public class MoveGenerator
                 if (i >= 299) { Console.WriteLine("giving up"); }
             }
 		}
-		
 		// real last resort
 		if (true)
 		{
@@ -826,7 +886,7 @@ public class MoveGenerator
 					gaminhoLastResourt.addGame(games.getGame(holyDog.getIndexArray()[j]));
 				}
 			}
-
+			
 			Console.WriteLine("gaminho -> " + gaminhoLastResourt.toMoveArray());
 			
 			if (gaminhoLastResourt.getSize() > 0)
@@ -847,12 +907,10 @@ public class MoveGenerator
 				Console.WriteLine("foideus de novo, #semata");
 			}
 		}
-		
         return -1;
     }
 }
 
-		
 public class Gen
 {
 	public void combinations(int[] n, GameCollection x)
@@ -908,7 +966,105 @@ public class Gen
       }
 }
 
+public class Gen3
+{
+	public void combinations(int[] n, GameCollection x)
+	{
+		int k = 3;
+		foreach (IEnumerable<int> i in Combinations(n, k))
+		{
+			x.addGame(new Game(i.ToArray()[0], i.ToArray()[1], i.ToArray()[2]));
+		}
+	}
+	
+	private static bool NextCombination(IList<int> num, int n, int k)
+      {
+         bool finished;
  
+         var changed = finished = false;
+ 
+         if (k <= 0) return false;
+ 
+         for (var i = k - 1; !finished && !changed; i--)
+         {
+            if (num[i] < n - 1 - (k - 1) + i)
+            {
+               num[i]++;
+ 
+               if (i < k - 1)
+                  for (var j = i + 1; j < k; j++)
+                     num[j] = num[j - 1] + 1;
+               changed = true;
+            }
+            finished = i == 0;
+         }
+ 
+         return changed;
+      }
+ 
+      private static IEnumerable Combinations<T>(IEnumerable<T> elements, int k)
+      {
+         var elem = elements.ToArray();
+         var size = elem.Length;
+ 
+         if (k > size) yield break;
+ 
+         var numbers = new int[k];
+ 
+         for (var i = 0; i < k; i++)
+            numbers[i] = i;
+ 
+         do
+         {
+            yield return numbers.Select(n => elem[n]);
+         } while (NextCombination(numbers, size, k));
+      }
+}
+
+public class hasBictory
+{
+	public int doesIt(Moves c, Moves p, GameCollection g)
+	{
+		GD.Print("hasBictory: " + c);
+		GD.Print("hasBictory: " + p);
+		
+		GD.Print(g);
+		
+		GD.Print("ver se 147 existe: " + g.getIndexGameContains(1, 4, 7));
+		GD.Print("ver se 714 existe: " + g.getIndexGameContains(7, 1, 4));
+		GD.Print("ver se 148 existe: " + g.getIndexGameContains(1, 4, 8));
+		GD.Print("ver se 258 existe: " + g.getIndexGameContains(2, 5, 8));
+		GD.Print("ver se 582 existe: " + g.getIndexGameContains(5, 8, 2));
+		GD.Print("ver se 048 existe: " + g.getIndexGameContains(0, 4, 8));
+		
+		GD.Print("cMoves: " + c);
+		
+		// public class Gen
+		// public void combinations(int[] n, GameCollection x)
+		GameCollection myG = new GameCollection();
+		
+		Gen3 lol = new Gen3();
+		lol.combinations(c.getMoves(), myG);
+		
+		GD.Print("n = 3, sera: " + myG);
+		
+		GD.Print("myG Length: " + myG.getArray().Length);
+		
+		for (int i = 0; i < myG.getArray().Length; i++)
+		{
+			
+			// GD.Print("vendo finalmente se esse jogo é bictory:");
+			int big = g.getIndexGameContains(myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
+			GD.Print("OMFG OQ Q E ISO: " + myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
+			if (big != -1) { return big; };
+				// callBictory(big);
+				// GD.Print("BICTORY!");
+
+		}
+		return -1;
+	}
+}
+
 public class Moves
 {
     int c = 0;
@@ -1076,8 +1232,8 @@ public class GameCollection
         }
         return -1;
     }
-   
-        public int getIndexGameContains(int m, int n, int o)
+
+    public int getIndexGameContains(int m, int n, int o)
     {
         for (int i = 0; i < gameArray.Length; i++)
         {
@@ -1155,21 +1311,26 @@ public class Index
 
 public class Game
 {
-  		int[] game;
+	int[] game;
+	
+	public int getInt(int k)
+	{
+		return game[k];
+	}
 	
     public Game(int x, int y, int z)
     {
 		game = new int[3];
-        game[0] = x;
-        game[1] = y;
-        game[2] = z;
+		game[0] = x;
+		game[1] = y;
+		game[2] = z;
     }
 	
 	public Game(int x, int y)
     {
 		game = new int[2];
-        game[0] = x;
-        game[1] = y;
+		game[0] = x;
+		game[1] = y;
     }
 	
     public bool contains(int n)

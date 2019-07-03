@@ -61,6 +61,9 @@ wait_time = 0.5
 
 [node name="ComputerMoveTimer" type="Timer" parent="."]
 wait_time = 2.0
+
+[node name="EndTimer" type="Timer" parent="."]
 [connection signal="timeout" from="TitleTimer" to="." method="onTitleTimerTimeout"]
 [connection signal="timeout" from="MoveTimer" to="." method="onMoveTimerTimeout"]
 [connection signal="timeout" from="ComputerMoveTimer" to="." method="onComputerMoveTimerTimeout"]
+[connection signal="timeout" from="EndTimer" to="." method="onEndTimerTimeout"]
