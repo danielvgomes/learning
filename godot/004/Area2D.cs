@@ -26,6 +26,12 @@ public class Area2D : Godot.Area2D
 	public MoveGenerator mg;
 	public GameCollection games;
 	
+	public int greatGrandCounter = 0;
+	public Vector2 pos;
+	public int xPos = 190;
+	public int yPos = 250;
+	public bool showBictoryBool = true;
+	
 	
 	
 	public enum Status {
@@ -111,11 +117,13 @@ public void setStatus(Status s)
 			GetNode<Timer>("TitleTimer").Start();
 			status = Status.Title;
 			GD.Print("status = Status.Title;");
-			// playerStarts = !playerStarts;
-			showTitle();
-			hideMessage();
-			hideBoard();
-			resetBoard();
+
+			// game is made of: grid, pieces and messages and title and end mark
+			showTitle(); // title of the game
+			hideMessage(); // duh
+			hideBoard(); // hide the grid
+			resetBoard(); // remove pieces
+			// hide winning mark !
 			if (playerStarts) { playerIs = 1; computerIs = 2; }
 			else { playerIs = 2; computerIs = 1; }
 		break;
@@ -318,24 +326,33 @@ public void resetBoard()
 
 public void showBictory(int r)
 {
-	moveEnabled = false; GD.Print("moveEnabled -> " + moveEnabled);
-	// GD.Print("setBictory()");
-		// instance.GetNode<Sprite>("Cray").Texture = player1List[rand.Next(5)];
-		// instance.GetNode<Sprite>("Cray").Scale = new Vector2(0.3f, 0.3f);
-		// instance.GetNode<Sprite>("Cray").Position = squareToCoords(square);
-		// boardInstance.GetNode<Sprite>("Cray").Texture = boardList[rand.Next(5)];
-		// bictory.GetNode<Sprite>("Bictory").Texture = "";
-		// Vector2 myPos = new Vector2(190, 250);
-		// Vector2 sum = new Vector2(10, 10);
-		Vector2 myPos = new Vector2(rand.Next(500), rand.Next(500));
-		bictoryInstance.GetNode<Sprite>("Bictory").Position = myPos;
-		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(8)];
-		bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
-		bictoryInstance.GetNode<Sprite>("Bictory").SetZIndex(1);
-		// this.GetNode<Panel>("Panel").GetNode<Sprite>("Sprite").Visible = false;
-		// GD.Print(myPos);
-		// callBictory();
+	bictoryInstance.GetNode<Sprite>("Bictory").SetZIndex(1);
+	pos = new Vector2(xPos, yPos); 
+	
+	if (r == 0) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)]; }
+	if (r == 1) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(2, 3)]; }
+	if (r == 2) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(4, 5)]; }
+	if (r == 3) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)]; }
+	if (r == 4) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)]; }
+	if (r == 5) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(2, 3)]; }
+	if (r == 6) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(4, 5)]; }
+	if (r == 7) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)]; }
+
+	bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
+	bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
 }
+
+public void showBictory()
+{
+	bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
+}
+
+
+public void hideBictory()
+{
+	bictoryInstance.GetNode<Sprite>("Bictory").Visible = false;
+}
+
 
 public void showVeia()
 {
@@ -386,27 +403,45 @@ public override void _UnhandledInput(InputEvent @event)
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape)
 		{
             // GetTree().Quit();
+			if (!showBictoryBool) { hideBictory(); } else { showBictory(); }
+			showBictoryBool = !showBictoryBool;
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Tab)
 		{
-			// setBictory();
+			showBictory(greatGrandCounter++);
+			if (greatGrandCounter >= 9) { greatGrandCounter = 0; }
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Left)
 		{
-			if (status == Status.Title) { setStatus(Status.End); return; }
-			if (status == Status.Player) { setStatus(Status.Title); return; }
-			if (status == Status.Computer) { setStatus(Status.Player); return; }
-			if (status == Status.End) { setStatus(Status.Computer); return; }
+			// if (status == Status.Title) { setStatus(Status.End); return; }
+			// if (status == Status.Player) { setStatus(Status.Title); return; }
+			// if (status == Status.Computer) { setStatus(Status.Player); return; }
+			// if (status == Status.End) { setStatus(Status.Computer); return; }
+			xPos -= 1;
+			GD.Print("xPos: " + xPos);
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Right)
 		{
-			if (status == Status.Title) { setStatus(Status.Player); return; }
-			if (status == Status.Player) { setStatus(Status.Computer); return; }
-			if (status == Status.Computer) { setStatus(Status.End); return; }
-			if (status == Status.End) { setStatus(Status.Title); return; }
+			// if (status == Status.Title) { setStatus(Status.Player); return; }
+			// if (status == Status.Player) { setStatus(Status.Computer); return; }
+			// if (status == Status.Computer) { setStatus(Status.End); return; }
+			// if (status == Status.End) { setStatus(Status.Title); return; }
+			xPos += 1;
+			GD.Print("xPos: " + xPos);
+		}
+				if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Down)
+		{
+			yPos += 1;
+			GD.Print("yPos: " + yPos);
+		}
+		
+		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Up)
+		{
+			yPos -= 1;
+			GD.Print("yPos: " + yPos);
 		}
 	}
 }
