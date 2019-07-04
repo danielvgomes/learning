@@ -327,7 +327,7 @@ public void resetBoard()
 public void showBictory(int r)
 {
 	bictoryInstance.GetNode<Sprite>("Bictory").SetZIndex(1);
-	pos = new Vector2(xPos, yPos); 
+	pos = new Vector2(xPos, yPos);
 	
 	if (r == 0) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)]; }
 	if (r == 1) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(2, 3)]; }
@@ -347,12 +347,10 @@ public void showBictory()
 	bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
 }
 
-
 public void hideBictory()
 {
 	bictoryInstance.GetNode<Sprite>("Bictory").Visible = false;
 }
-
 
 public void showVeia()
 {
@@ -421,6 +419,9 @@ public override void _UnhandledInput(InputEvent @event)
 			// if (status == Status.End) { setStatus(Status.Computer); return; }
 			xPos -= 1;
 			GD.Print("xPos: " + xPos);
+			pos = new Vector2(xPos, yPos);
+			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
+
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Right)
@@ -431,17 +432,23 @@ public override void _UnhandledInput(InputEvent @event)
 			// if (status == Status.End) { setStatus(Status.Title); return; }
 			xPos += 1;
 			GD.Print("xPos: " + xPos);
+			pos = new Vector2(xPos, yPos);
+			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
 		}
 				if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Down)
 		{
 			yPos += 1;
 			GD.Print("yPos: " + yPos);
+			pos = new Vector2(xPos, yPos);
+			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Up)
 		{
 			yPos -= 1;
 			GD.Print("yPos: " + yPos);
+			pos = new Vector2(xPos, yPos);
+			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
 		}
 	}
 }
@@ -466,13 +473,14 @@ private void onComputerMoveTimerTimeout()
     GetNode<Timer>("ComputerMoveTimer").Stop();
 	if (addMove(mg.getMove(games, pMoves, cMoves, availableMoves), computerIs))
 	{
-		setStatus(Status.Player);
+		// setStatus(Status.Player);
 	}
 }
 
 private void onEndTimerTimeout()
 {
     GD.Print("Terminou o fim");
+	GetNode<Timer>("EndTimer").Stop();
 }
 
 
