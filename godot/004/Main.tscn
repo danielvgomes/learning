@@ -53,17 +53,9 @@ text = "(find helpful comments here)"
 align = 1
 valign = 1
 
-[node name="TitleTimer" type="Timer" parent="."]
-wait_time = 2.0
-
-[node name="MoveTimer" type="Timer" parent="."]
-wait_time = 0.5
-
 [node name="ComputerMoveTimer" type="Timer" parent="."]
 wait_time = 2.0
 
-[node name="EndTimer" type="Timer" parent="."]
-[connection signal="timeout" from="TitleTimer" to="." method="onTitleTimerTimeout"]
-[connection signal="timeout" from="MoveTimer" to="." method="onMoveTimerTimeout"]
+[node name="WaitTimer" type="Timer" parent="."]
 [connection signal="timeout" from="ComputerMoveTimer" to="." method="onComputerMoveTimerTimeout"]
-[connection signal="timeout" from="EndTimer" to="." method="onEndTimerTimeout"]
+[connection signal="timeout" from="WaitTimer" to="." method="onWaitTimerTimeout"]

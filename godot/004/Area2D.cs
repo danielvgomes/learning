@@ -31,6 +31,7 @@ public class Area2D : Godot.Area2D
 	public int xPos = 190;
 	public int yPos = 250;
 	public bool showBictoryBool = true;
+	public bool wait = false;
 	
 	
 	
@@ -38,7 +39,9 @@ public class Area2D : Godot.Area2D
 		Title,
 		Player,
 		Computer,
-		End
+		End,
+		OldLady,
+		Start
 		}
 		
 	Status status;
@@ -97,12 +100,6 @@ public class Area2D : Godot.Area2D
 	AddChild(boardInstance);
 	AddChild(bictoryInstance);
 	
-	controlsEnabled = false;
-	
-	if (rand.Next(2) == 0) { playerStarts = true; } else { playerStarts = false; }
-	
-	moveEnabled = false;
-	
 	setStatus(Status.Title);
 }
 
@@ -114,18 +111,14 @@ public void setStatus(Status s)
 		case Status.Title:
 			setUpComputer();
 			GD.Print("starting timer");
-			GetNode<Timer>("TitleTimer").Start();
+			GetNode<Timer>("WaitTimer").Start();
+			wait = true;
 			status = Status.Title;
 			GD.Print("status = Status.Title;");
-
-			// game is made of: grid, pieces and messages and title and end mark
 			showTitle(); // title of the game
 			hideMessage(); // duh
 			hideBoard(); // hide the grid
 			resetBoard(); // remove pieces
-			// hide winning mark !
-			if (playerStarts) { playerIs = 1; computerIs = 2; }
-			else { playerIs = 2; computerIs = 1; }
 		break;
 		case Status.Computer:
 			moveEnabled = false;
@@ -141,7 +134,7 @@ public void setStatus(Status s)
 		break;
 				
 		case Status.Player:
-			GetNode<Timer>("MoveTimer").Start();
+			// GetNode<Timer>("MoveTimer").Start();
 			setMessage("player to move");
 			showMessage();
 			// moveEnabled = true;
@@ -154,10 +147,33 @@ public void setStatus(Status s)
 				
 		case Status.End:
 			status = Status.End;
+			// hideTitle();
+			int lol = rand.Next(4);
+			if (lol == 0) { setMessage("this is a pointless game"); }
+			if (lol == 0) { setMessage("thanks - I guess"); }
+			if (lol == 0) { setMessage("you can't beat me forever"); }
+			if (lol == 0) { setMessage("computers are never really random"); }
+			showMessage();
+		break;
+		
+		case Status.OldLady:
+			setMessage("Cat's Game!");
+			showMessage();
+		break;
+		
+		case Status.Start:
 			hideTitle();
-			hideMessage();
-			hideBoard();
-			GD.Print("status = Status.End;");
+			if (rand.Next(2) == 0) { playerStarts = true; } else { playerStarts = false; }
+			if (playerStarts)
+			{
+				playerIs = 1; computerIs = 2;
+				setStatus(Status.Player);
+			}
+			else
+			{
+				playerIs = 2; computerIs = 1;
+				setStatus(Status.Computer);
+			}
 		break;
 	}
 }
@@ -185,27 +201,23 @@ public override void _Process(float delta)
 
 public override void _Input(InputEvent @event)
 {
-	if (@event is InputEventMouseButton eventMouseButton && controlsEnabled)
+	if (@event is InputEventMouseButton eventMouseButton)
 	{
 		if (status == Status.Title)
 		{
-			if (playerStarts) { setStatus(Status.Player); }
-			else { setStatus(Status.Computer); }
-			return;
+			if (!wait) { setStatus(Status.Start); }
 		}
 		
-		if (moveEnabled && status == Status.Player)
+		if (status == Status.Player)
 		{
 			int square = coordToSquares(GetViewport().GetMousePosition().x, GetViewport().GetMousePosition().y);
 			if (addMove(square, playerIs))
 			{
-				setStatus(Status.Computer);
 			}
 		}
-		if (bictoryOrBeia)
+		if (status == Status.OldLady)
 		{
-			bictoryOrBeia = false;
-			setStatus(Status.Title);
+			if (!wait) { setStatus(Status.Start); }
 		}
 	}
 }
@@ -226,12 +238,12 @@ public bool addMove(int square, int player)
 	if ((playerStarts && player == 1) || (!playerStarts && player == 2))
 	{
 		pMoves.add(square); availableMoves.remove(square);
-		testBictory();
+		if (!testBictory()) { setStatus(Status.Computer); }
 	}
 	if ((playerStarts && player == 2) || (!playerStarts && player == 1))
 	{
 		cMoves.add(square); availableMoves.remove(square);
-		testBictory();
+		if (!testBictory()) { setStatus(Status.Player); }
 	}
 	
 	/*
@@ -352,13 +364,7 @@ public void hideBictory()
 	bictoryInstance.GetNode<Sprite>("Bictory").Visible = false;
 }
 
-public void showVeia()
-{
-	GD.Print("DEU VEIA");
-	bictoryOrBeia = true;
-}
-
-public void testBictory()
+public bool testBictory()
 {
 	GD.Print("testBictory()");
 	int result = findWinningGames.doesIt(cMoves, pMoves, games);
@@ -366,16 +372,19 @@ public void testBictory()
 	
 	if (result != -1)
 	{
-		bictoryOrBeia = true;
 		hideMessage();
-		GetNode<Timer>("EndTimer").Start();
+		GetNode<Timer>("WaitTimer").Start();
 		showBictory(result);
+		setStatus(Status.End);
+		return true;
 	}
 	
 	if ((cMoves.getMoves().Length + pMoves.getMoves().Length) >= 9)
 	{
-		showVeia();
+		setStatus(Status.OldLady);
+		return true;
 	}
+	return false;
 }
 
 public void hideTitle()
@@ -452,21 +461,6 @@ public override void _UnhandledInput(InputEvent @event)
 		}
 	}
 }
-private void onTitleTimerTimeout()
-{
-	GD.Print("enabling controls");
-    controlsEnabled = true;
-	moveEnabled = false;
-	// setMessage("Click to start");
-	// showMessage();
-	GetNode<Timer>("TitleTimer").Stop();
-}
-
-private void onMoveTimerTimeout()
-{
-    if (!bictoryOrBeia) { moveEnabled = true; }
-	GetNode<Timer>("MoveTimer").Stop();
-}
 
 private void onComputerMoveTimerTimeout()
 {
@@ -477,10 +471,9 @@ private void onComputerMoveTimerTimeout()
 	}
 }
 
-private void onEndTimerTimeout()
+private void onWaitTimerTimeout()
 {
-    GD.Print("Terminou o fim");
-	GetNode<Timer>("EndTimer").Stop();
+    wait = false;
 }
 
 
