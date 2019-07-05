@@ -1,10 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Area2D.cs" type="Script" id=1]
 [ext_resource path="res://Ink.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Bictory.tscn" type="PackedScene" id=3]
 [ext_resource path="res://art/notebook3.png" type="Texture" id=4]
 [ext_resource path="res://font/charlotte.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://art/blue_egg.png" type="Texture" id=6]
 
 [sub_resource type="DynamicFont" id=1]
 size = 42
@@ -13,6 +14,38 @@ font_data = ExtResource( 5 )
 [sub_resource type="DynamicFont" id=2]
 size = 20
 font_data = ExtResource( 5 )
+
+[sub_resource type="Animation" id=3]
+resource_name = "FadeIn"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 2.2, 2.2 ), Vector2( 0, 0 ) ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "FadeOut"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, 0 ), Vector2( 2.2, 2.2 ) ]
+}
 
 [node name="Stage" type="Area2D"]
 script = ExtResource( 1 )
@@ -60,6 +93,19 @@ wait_time = 2.0
 wait_time = 5.0
 
 [node name="StartTimer" type="Timer" parent="."]
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 200, 250 )
+scale = Vector2( 1e-005, 1e-005 )
+z_index = 2
+texture = ExtResource( 6 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/FadeIn = SubResource( 3 )
+anims/FadeOut = SubResource( 4 )
+
+[node name="TransitionTimer" type="Timer" parent="."]
 [connection signal="timeout" from="ComputerMoveTimer" to="." method="onComputerMoveTimerTimeout"]
 [connection signal="timeout" from="WaitTimer" to="." method="onWaitTimerTimeout"]
 [connection signal="timeout" from="StartTimer" to="." method="onStartTimerTimeout"]
+[connection signal="timeout" from="TransitionTimer" to="." method="onTransitionTimerTimeout"]

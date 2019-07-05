@@ -30,8 +30,6 @@ public class Area2D : Godot.Area2D
 	public bool showBictoryBool = true;
 	public bool wait = false;
 	
-	
-	
 	public enum Status {
 		Title,
 		Player,
@@ -42,6 +40,7 @@ public class Area2D : Godot.Area2D
 		}
 		
 	Status status;
+	Status delayedStatusCall;
 	
 	[Export]
 	public PackedScene ink;
@@ -140,11 +139,14 @@ public void setStatus(Status s)
 			wait = true;
 			GD.Print("Status.End");
 			status = Status.End;
-			int lol = rand.Next(4);
+			int lol = rand.Next(7);
 			if (lol == 0) { setMessage("this is a pointless game"); }
-			if (lol == 1) { setMessage("thanks - I guess"); }
-			if (lol == 2) { setMessage("you can't beat me forever"); }
-			if (lol == 3) { setMessage("computers are never really random"); }
+			if (lol == 1) { setMessage("are you playing randomly as well?"); }
+			if (lol == 2) { setMessage("bet you can't beat me everytime"); }
+			if (lol == 3) { setMessage("I'm programmed to lose :("); }
+			if (lol == 4) { setMessage("ever ate a tide pod?"); }
+			if (lol == 5) { setMessage("computers > humans"); }
+			if (lol == 6) { setMessage("I would gladly play chess instead"); }
 			GD.Print("lol is: " + lol);
 			GD.Print("Message after lol is: " + GetNode<Panel>("Panel").GetNode<Label>("Message").Text);
 			showMessage();
@@ -167,7 +169,7 @@ public void setStatus(Status s)
 		case Status.Start:
 			status = Status.Start;
 			GD.Print("Status.Start");
-			setMessage("ready?");
+			setMessage("(computer is pretending to think)");
 			hideTitle();
 			hideBictory();
 			
@@ -213,7 +215,7 @@ public override void _Input(InputEvent @event)
 		GD.Print("Click");
 		if (status == Status.Title && !wait)
 		{
-			setStatus(Status.Start);
+			transition(Status.Start);
 		}
 		
 		if (status == Status.Player && !wait)
@@ -225,11 +227,11 @@ public override void _Input(InputEvent @event)
 		}
 		if (status == Status.OldLady && !wait)
 		{
-			setStatus(Status.Start);
+			transition(Status.Start);
 		}
 		if (status == Status.End && !wait)
 		{
-			setStatus(Status.Start);
+			transition(Status.Start);
 		}
 	}
 }
@@ -544,6 +546,23 @@ private void onStartTimerTimeout()
 				setStatus(Status.Computer);
 			}
 }
+
+public void transition(Status s)
+{
+	delayedStatusCall = s;
+	GetNode<AnimationPlayer>("AnimationPlayer").Play("FadeOut");
+	GetNode<Timer>("TransitionTimer").SetWaitTime(1f);
+	GetNode<Timer>("TransitionTimer").Start();
+}
+
+private void onTransitionTimerTimeout()
+{
+	setStatus(delayedStatusCall);
+	GetNode<AnimationPlayer>("AnimationPlayer").Play("FadeIn");
+	GetNode<Timer>("TransitionTimer").Stop();
+}
+
+
 
 }
 
