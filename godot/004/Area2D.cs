@@ -12,9 +12,6 @@ public class Area2D : Godot.Area2D
 	private RigidBody2D bictoryInstance;
 	
 	private bool playerStarts;
-	private bool controlsEnabled;
-	private bool moveEnabled;
-	private bool bictoryOrBeia;
 	private int playerIs;
 	private int computerIs;
 	private Random rand = new Random();
@@ -45,7 +42,7 @@ public class Area2D : Godot.Area2D
 		}
 		
 	Status status;
-		
+	
 	[Export]
 	public PackedScene ink;
 	
@@ -82,7 +79,7 @@ public class Area2D : Godot.Area2D
 			{
 				player1List.Add((Texture)ResourceLoader.Load("res://art/" + fileName));
 			}
-			if ((fileName.Contains("bictory")) && (!fileName.Contains(".import")))
+			if ((fileName.Contains("01_bictory")) && (!fileName.Contains(".import")))
 			{
 				bictoryList.Add((Texture)ResourceLoader.Load("res://art/" + fileName));
 			}
@@ -105,75 +102,86 @@ public class Area2D : Godot.Area2D
 
 public void setStatus(Status s)
 {
-
 	switch (s)
 	{
 		case Status.Title:
-			setUpComputer();
-			GD.Print("starting timer");
-			GetNode<Timer>("WaitTimer").Start();
+			GD.Print("Status.Title");
 			wait = true;
 			status = Status.Title;
-			GD.Print("status = Status.Title;");
 			showTitle(); // title of the game
 			hideMessage(); // duh
 			hideBoard(); // hide the grid
-			resetBoard(); // remove pieces
+			GetNode<Timer>("WaitTimer").SetWaitTime(0.5f);
+			GetNode<Timer>("WaitTimer").Start();
 		break;
 		case Status.Computer:
-			moveEnabled = false;
+			GD.Print("Status.Computer");
 			setMessage("computer to move");
 			showMessage();
 			status = Status.Computer;
 			GD.Print("status = Status.Computer;");
 			hideTitle();
-			// hideMessage();
 			showBoard();
 			GetNode<Timer>("ComputerMoveTimer").SetWaitTime((float)rand.NextDouble());
 			GetNode<Timer>("ComputerMoveTimer").Start();
 		break;
 				
 		case Status.Player:
-			// GetNode<Timer>("MoveTimer").Start();
+			GD.Print("Status.Player");
 			setMessage("player to move");
 			showMessage();
-			// moveEnabled = true;
 			status = Status.Player;
 			GD.Print("status = Status.Player;");
 			hideTitle();
-			// hideMessage();
 			showBoard();
 		break;
 				
 		case Status.End:
+			wait = true;
+			GD.Print("Status.End");
 			status = Status.End;
-			// hideTitle();
 			int lol = rand.Next(4);
 			if (lol == 0) { setMessage("this is a pointless game"); }
-			if (lol == 0) { setMessage("thanks - I guess"); }
-			if (lol == 0) { setMessage("you can't beat me forever"); }
-			if (lol == 0) { setMessage("computers are never really random"); }
+			if (lol == 1) { setMessage("thanks - I guess"); }
+			if (lol == 2) { setMessage("you can't beat me forever"); }
+			if (lol == 3) { setMessage("computers are never really random"); }
+			GD.Print("lol is: " + lol);
+			GD.Print("Message after lol is: " + GetNode<Panel>("Panel").GetNode<Label>("Message").Text);
 			showMessage();
+			GetNode<Timer>("WaitTimer").SetWaitTime(0.5f);
+			GetNode<Timer>("WaitTimer").Start();
+			GD.Print("Message is: " + GetNode<Panel>("Panel").GetNode<Label>("Message").Text);
+			GD.Print("Status is: " + status);
 		break;
 		
 		case Status.OldLady:
+			status = Status.OldLady;
+			wait = true;
+			GD.Print("Status.OldLady");
 			setMessage("Cat's Game!");
 			showMessage();
+			GetNode<Timer>("WaitTimer").SetWaitTime(0.5f);
+			GetNode<Timer>("WaitTimer").Start();
 		break;
 		
 		case Status.Start:
+			status = Status.Start;
+			GD.Print("Status.Start");
+			setMessage("ready?");
 			hideTitle();
-			if (rand.Next(2) == 0) { playerStarts = true; } else { playerStarts = false; }
-			if (playerStarts)
-			{
-				playerIs = 1; computerIs = 2;
-				setStatus(Status.Player);
-			}
-			else
-			{
-				playerIs = 2; computerIs = 1;
-				setStatus(Status.Computer);
-			}
+			hideBictory();
+			
+			setUpComputer();
+			resetBoard();
+			
+			showBoard();
+			showMessage();
+			
+			GetNode<Timer>("WaitTimer").SetWaitTime(0.5f);
+			GetNode<Timer>("WaitTimer").Start();
+			
+			GetNode<Timer>("StartTimer").SetWaitTime(1.5f);
+			GetNode<Timer>("StartTimer").Start();
 		break;
 	}
 }
@@ -184,13 +192,12 @@ public void setUpComputer()
     cMoves = new Moves();
 	availableMoves = new Moves();
 	mg = new MoveGenerator();
- 
+
 	games = new GameCollection(new Game(0, 1, 2), new Game(3, 4, 5), new Game(0, 3, 6), new Game(2, 4, 6),
 												new Game(1, 4, 7), new Game(2, 5, 8), new Game(0, 4, 8), new Game(6, 7, 8));
  
 	availableMoves = games.toMoveArray();
 }
-
 
 public override void _Process(float delta)
 {
@@ -203,21 +210,26 @@ public override void _Input(InputEvent @event)
 {
 	if (@event is InputEventMouseButton eventMouseButton)
 	{
-		if (status == Status.Title)
+		GD.Print("Click");
+		if (status == Status.Title && !wait)
 		{
-			if (!wait) { setStatus(Status.Start); }
+			setStatus(Status.Start);
 		}
 		
-		if (status == Status.Player)
+		if (status == Status.Player && !wait)
 		{
 			int square = coordToSquares(GetViewport().GetMousePosition().x, GetViewport().GetMousePosition().y);
 			if (addMove(square, playerIs))
 			{
 			}
 		}
-		if (status == Status.OldLady)
+		if (status == Status.OldLady && !wait)
 		{
-			if (!wait) { setStatus(Status.Start); }
+			setStatus(Status.Start);
+		}
+		if (status == Status.End && !wait)
+		{
+			setStatus(Status.Start);
 		}
 	}
 }
@@ -303,6 +315,7 @@ public Vector2 squareToCoords(int s)
 
 public void setMessage(string mess)
 {
+	GD.Print("setMessage called");
 	GetNode<Panel>("Panel").GetNode<Label>("Message").Text = mess;
 }
 
@@ -341,14 +354,60 @@ public void showBictory(int r)
 	bictoryInstance.GetNode<Sprite>("Bictory").SetZIndex(1);
 	pos = new Vector2(xPos, yPos);
 	
-	if (r == 0) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)]; }
-	if (r == 1) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(2, 3)]; }
-	if (r == 2) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(4, 5)]; }
-	if (r == 3) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)]; }
-	if (r == 4) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)]; }
-	if (r == 5) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(2, 3)]; }
-	if (r == 6) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(4, 5)]; }
-	if (r == 7) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)]; }
+	// 0 -> horizontal 1 0: y170 1: y250 2: y320
+	// 1 -> horizontal 2 0: y170 1: y250 2: y320
+	// 2 -> left 1
+	// 3 -> left 2
+	// 4 -> right 1
+	// 5 -> right 2
+	// 6 -> vert 1 0: x110 1: x190 2: x270
+	// 7 -> vert 2 0: x110 1: x190 2: x270
+	
+// (0, 1, 2)(3, 4, 5)(6, 7, 8) -> HORIZONTAL
+// (0, 3, 6)(1, 4, 7)(2, 5, 8) -> VERTICAL
+// (2, 4, 6) -> RIGHT
+// (0, 4, 8) -> LEFT
+
+//(0, 1, 2)(3, 4, 5)(0, 3, 6)(2, 4, 6)(1, 4, 7)(2, 5, 8)(0, 4, 8)(6, 7, 8)
+	
+	if (r == 7)
+	{
+		pos = new Vector2(xPos, 320);
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)];
+	}
+	
+	if (r == 5)
+	{
+		pos = new Vector2(270, yPos);
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)];
+	}
+	
+	if (r == 4)
+	{
+		pos = new Vector2(xPos, yPos);
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)];
+	}
+	
+	if (r == 2)
+	{
+		pos = new Vector2(110, yPos);
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(6, 7)];
+	}
+	
+	if (r == 1)
+	{
+		pos = new Vector2(xPos, yPos);
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)];
+	}
+	
+	if (r == 0)
+	{
+		pos = new Vector2(xPos, 170);
+		bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(0, 1)];
+	}
+	
+	if (r == 3) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(4, 5)]; }
+	if (r == 6) { bictoryInstance.GetNode<Sprite>("Bictory").Texture = bictoryList[rand.Next(2, 3)]; }
 
 	bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
 	bictoryInstance.GetNode<Sprite>("Bictory").Visible = true;
@@ -422,29 +481,21 @@ public override void _UnhandledInput(InputEvent @event)
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Left)
 		{
-			// if (status == Status.Title) { setStatus(Status.End); return; }
-			// if (status == Status.Player) { setStatus(Status.Title); return; }
-			// if (status == Status.Computer) { setStatus(Status.Player); return; }
-			// if (status == Status.End) { setStatus(Status.Computer); return; }
 			xPos -= 1;
 			GD.Print("xPos: " + xPos);
 			pos = new Vector2(xPos, yPos);
 			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
-
 		}
 		
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Right)
 		{
-			// if (status == Status.Title) { setStatus(Status.Player); return; }
-			// if (status == Status.Player) { setStatus(Status.Computer); return; }
-			// if (status == Status.Computer) { setStatus(Status.End); return; }
-			// if (status == Status.End) { setStatus(Status.Title); return; }
 			xPos += 1;
 			GD.Print("xPos: " + xPos);
 			pos = new Vector2(xPos, yPos);
 			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
 		}
-				if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Down)
+		
+		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Down)
 		{
 			yPos += 1;
 			GD.Print("yPos: " + yPos);
@@ -473,207 +524,33 @@ private void onComputerMoveTimerTimeout()
 
 private void onWaitTimerTimeout()
 {
+	GetNode<Timer>("WaitTimer").Stop();
+	GD.Print("onWaitTimerTimeout()");
     wait = false;
 }
 
+private void onStartTimerTimeout()
+{
+	GetNode<Timer>("StartTimer").Stop();
+    if (rand.Next(2) == 0) { playerStarts = true; } else { playerStarts = false; }
+			if (playerStarts)
+			{
+				playerIs = 1; computerIs = 2;
+				setStatus(Status.Player);
+			}
+			else
+			{
+				playerIs = 2; computerIs = 1;
+				setStatus(Status.Computer);
+			}
+}
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/*
+*	############# GAME CHANGING CODE #############
+*	############# GAME CHANGING CODE #############
+*/
 
 
 public class IsAvailable
@@ -1061,42 +938,32 @@ public class hasBictory
 {
 	public int doesIt(Moves c, Moves p, GameCollection g)
 	{
-		GD.Print("hasBictory: " + c);
-		GD.Print("hasBictory: " + p);
-		
-		GD.Print(g);
-		
-		GD.Print("ver se 147 existe: " + g.getIndexGameContains(1, 4, 7));
-		GD.Print("ver se 714 existe: " + g.getIndexGameContains(7, 1, 4));
-		GD.Print("ver se 148 existe: " + g.getIndexGameContains(1, 4, 8));
-		GD.Print("ver se 258 existe: " + g.getIndexGameContains(2, 5, 8));
-		GD.Print("ver se 582 existe: " + g.getIndexGameContains(5, 8, 2));
-		GD.Print("ver se 048 existe: " + g.getIndexGameContains(0, 4, 8));
-		
-		GD.Print("cMoves: " + c);
-		
-		// public class Gen
-		// public void combinations(int[] n, GameCollection x)
+		// GD.Print("hasBictory: " + c);
+		// GD.Print("hasBictory: " + p);
+		// GD.Print(g);
+
 		GameCollection myG = new GameCollection();
-		
 		Gen3 lol = new Gen3();
 		lol.combinations(c.getMoves(), myG);
 		
-		GD.Print("n = 3, sera: " + myG);
+		for (int i = 0; i < myG.getArray().Length; i++)
+		{
+			int big = g.getIndexGameContains(myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
+			// GD.Print("OMFG OQ Q E ISO: " + myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
+			if (big != -1) { return big; };
+		}
 		
-		GD.Print("myG Length: " + myG.getArray().Length);
+		lol.combinations(p.getMoves(), myG);
 		
 		for (int i = 0; i < myG.getArray().Length; i++)
 		{
-			
-			// GD.Print("vendo finalmente se esse jogo é bictory:");
 			int big = g.getIndexGameContains(myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
-			GD.Print("OMFG OQ Q E ISO: " + myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
+			// GD.Print("OMFG OQ Q E ISO: " + myG.getArray()[i].getInt(0), myG.getArray()[i].getInt(1), myG.getArray()[i].getInt(2));
 			if (big != -1) { return big; };
-				// callBictory(big);
-				// GD.Print("BICTORY!");
-
 		}
+		
+		
+		
 		return -1;
 	}
 }

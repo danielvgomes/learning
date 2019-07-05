@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bictory_ver_2.png-119b932742940d9013e8809fd27c6be4.stex"
+path="res://.import/01_bictory_hor_1.png-e14cfa19b87d2a92ab54970183b482ac.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/bictory_ver_2.png"
-dest_files=[ "res://.import/bictory_ver_2.png-119b932742940d9013e8809fd27c6be4.stex" ]
+source_file="res://art/01_bictory_hor_1.png"
+dest_files=[ "res://.import/01_bictory_hor_1.png-e14cfa19b87d2a92ab54970183b482ac.stex" ]
 
 [params]
 

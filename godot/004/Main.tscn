@@ -57,5 +57,9 @@ valign = 1
 wait_time = 2.0
 
 [node name="WaitTimer" type="Timer" parent="."]
+wait_time = 5.0
+
+[node name="StartTimer" type="Timer" parent="."]
 [connection signal="timeout" from="ComputerMoveTimer" to="." method="onComputerMoveTimerTimeout"]
 [connection signal="timeout" from="WaitTimer" to="." method="onWaitTimerTimeout"]
+[connection signal="timeout" from="StartTimer" to="." method="onStartTimerTimeout"]
