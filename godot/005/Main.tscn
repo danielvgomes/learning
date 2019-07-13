@@ -1,54 +1,76 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Main.cs" type="Script" id=1]
 [ext_resource path="res://Ship.tscn" type="PackedScene" id=2]
-[ext_resource path="res://textures/stars_texture_1.png" type="Texture" id=3]
-[ext_resource path="res://Bullet.tscn" type="PackedScene" id=4]
+[ext_resource path="res://textures/stars_texture_2.png" type="Texture" id=3]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
 ship = ExtResource( 2 )
 
-[node name="Ship" parent="." instance=ExtResource( 2 )]
-position = Vector2( 325.387, 161.806 )
-
-[node name="Camera2D" type="Camera2D" parent="Ship"]
-position = Vector2( 3.05402, 0.0340881 )
-current = true
-zoom = Vector2( 1.5, 1.5 )
-smoothing_enabled = true
-smoothing_speed = 7.0
-
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+editor/display_folded = true
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+editor/display_folded = true
 z_index = -1
 motion_scale = Vector2( 0.2, 0.2 )
-motion_offset = Vector2( 1, 1 )
 motion_mirroring = Vector2( 2000, 2000 )
 
 [node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
 position = Vector2( 1000, 1000 )
 texture = ExtResource( 3 )
 
-[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
-amount = 50
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground"]
+editor/display_folded = true
+motion_scale = Vector2( 0.5, 0.5 )
+motion_mirroring = Vector2( 2000, 2000 )
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="ParallaxBackground/ParallaxLayer2"]
+position = Vector2( 1000, 1000 )
+amount = 300
+lifetime = 1000.0
+preprocess = 600.0
+emission_shape = 2
+emission_rect_extents = Vector2( 1000, 1000 )
+spread = 180.0
 gravity = Vector2( 0, 0 )
+initial_velocity = 30.0
+initial_velocity_random = 1.0
+angular_velocity = 30.0
+angular_velocity_random = 1.0
+scale_amount = 5.0
+scale_amount_random = 1.0
+color = Color( 0.392157, 0.392157, 0.392157, 1 )
+hue_variation = 0.14
+hue_variation_random = 1.0
 
-[node name="RigidBody2D" parent="." instance=ExtResource( 4 )]
-position = Vector2( 319.28, 321.401 )
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="ParallaxBackground"]
+editor/display_folded = true
+motion_mirroring = Vector2( 2000, 2000 )
 
-[node name="RigidBody2D2" parent="." instance=ExtResource( 4 )]
-position = Vector2( 593.191, 319.731 )
+[node name="CPUParticles2D" type="CPUParticles2D" parent="ParallaxBackground/ParallaxLayer3"]
+position = Vector2( 1000, 1000 )
+amount = 100
+lifetime = 1000.0
+preprocess = 600.0
+emission_shape = 2
+emission_rect_extents = Vector2( 1000, 1000 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 30.0
+initial_velocity_random = 1.0
+angular_velocity = 30.0
+angular_velocity_random = 1.0
+scale_amount = 5.0
+scale_amount_random = 1.0
+color = Color( 0.392157, 0.392157, 0.392157, 1 )
+hue_variation = 0.14
+hue_variation_random = 1.0
 
-[node name="RigidBody2D3" parent="." instance=ExtResource( 4 )]
-position = Vector2( 531.394, 162.733 )
-
-[node name="RigidBody2D4" parent="." instance=ExtResource( 4 )]
-position = Vector2( 97.1454, 217.85 )
-
-[node name="RigidBody2D5" parent="." instance=ExtResource( 4 )]
-position = Vector2( 168.963, 74.2136 )
-
-[node name="RigidBody2D6" parent="." instance=ExtResource( 4 )]
-position = Vector2( 424.502, 9.07639 )
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2( 328.441, 161.84 )
+current = true
+zoom = Vector2( 1.5, 1.5 )
+smoothing_enabled = true
+smoothing_speed = 7.0
