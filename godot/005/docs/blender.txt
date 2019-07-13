@@ -1,0 +1,43 @@
+a -> deselect, select all
+period -> frame up selected object
+
+g -> move
+r -> rotate
+s -> scale
+
+n -> properties
+t -> tool shelf
+
+tab -> editing
+
+ctrl + tab -> menu of components
+
+shift + s -> snap
+
+b - > box select
+c -> ?? select
+
+o -> proporcional
+
+shift + d -> duplicate
+
+p -> sepperet
+
+shift + z -> troca de renderizado pra não
+
+F12 -> render
+
+F11 -> sai do render
+
+J -> toggle between renders
+
+alt + J -> mema coisa toggle renders
+
+H -> escode as stuff
+
+alt + H -> motra tuda
+
+
+
+
+

@@ -1,17 +1,15 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Main.gd" type="Script" id=1]
 [ext_resource path="res://Ball.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/Bouncy Platform Long.png" type="Texture" id=3]
-[ext_resource path="res://sayhello.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Label.tscn" type="PackedScene" id=5]
 
 [sub_resource type="PhysicsMaterial" id=1]
 bounce = 0.5
 
 [sub_resource type="CapsuleShape2D" id=2]
 radius = 28.7617
-height = 253.621
+height = 4.01584
 
 [sub_resource type="PhysicsMaterial" id=3]
 bounce = 0.5
@@ -30,9 +28,6 @@ bounce = 0.5
 
 [sub_resource type="PhysicsMaterial" id=8]
 bounce = 0.5
-
-[sub_resource type="PhysicsMaterial" id=13]
-bounce = 15.0
 
 [node name="Main" type="Node"]
 script = ExtResource( 1 )
@@ -169,7 +164,6 @@ rotation = 1.5708
 shape = SubResource( 2 )
 
 [node name="Wall5" type="StaticBody2D" parent="WallContainer"]
-editor/display_folded = true
 position = Vector2( 10.7606, -83.0878 )
 rotation = 1.48353
 physics_material_override = SubResource( 7 )
@@ -215,22 +209,3 @@ texture = ExtResource( 3 )
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WallContainer/Wall6"]
 rotation = 1.5708
 shape = SubResource( 2 )
-
-[node name="Ball3" parent="." instance=ExtResource( 2 )]
-position = Vector2( 81.293, -948.408 )
-mass = 13.3153
-physics_material_override = SubResource( 13 )
-
-[node name="Panel" parent="Ball3" instance=ExtResource( 4 )]
-margin_left = -488.563
-margin_top = 108.261
-margin_right = -374.563
-margin_bottom = 189.261
-
-[node name="Label" parent="." instance=ExtResource( 5 )]
-
-[node name="TextEdit" type="TextEdit" parent="."]
-margin_left = 630.321
-margin_top = -64.1132
-margin_right = 875.321
-margin_bottom = 156.887

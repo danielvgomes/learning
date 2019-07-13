@@ -1,0 +1,6 @@
+E:\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.csprojAssemblyReference.cache
+E:\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.csproj.CoreCompileInputs.cache
+E:\workspace\learning\godot\005\.mono\temp\bin\Tools\Glass Storm.dll
+E:\workspace\learning\godot\005\.mono\temp\bin\Tools\Glass Storm.pdb
+E:\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.dll
+E:\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.pdb

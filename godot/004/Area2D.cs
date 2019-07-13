@@ -490,6 +490,7 @@ public void showTitle()
 
 public override void _UnhandledInput(InputEvent @event)
 {
+	/*
     if (@event is InputEventKey eventKey)
 	{
 		if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Escape)
@@ -537,6 +538,7 @@ public override void _UnhandledInput(InputEvent @event)
 			bictoryInstance.GetNode<Sprite>("Bictory").Position = pos;
 		}
 	}
+	*/
 }
 
 private void onComputerMoveTimerTimeout()

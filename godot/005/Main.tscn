@@ -1,0 +1,54 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Main.cs" type="Script" id=1]
+[ext_resource path="res://Ship.tscn" type="PackedScene" id=2]
+[ext_resource path="res://textures/stars_texture_1.png" type="Texture" id=3]
+[ext_resource path="res://Bullet.tscn" type="PackedScene" id=4]
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource( 1 )
+ship = ExtResource( 2 )
+
+[node name="Ship" parent="." instance=ExtResource( 2 )]
+position = Vector2( 325.387, 161.806 )
+
+[node name="Camera2D" type="Camera2D" parent="Ship"]
+position = Vector2( 3.05402, 0.0340881 )
+current = true
+zoom = Vector2( 1.5, 1.5 )
+smoothing_enabled = true
+smoothing_speed = 7.0
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+z_index = -1
+motion_scale = Vector2( 0.2, 0.2 )
+motion_offset = Vector2( 1, 1 )
+motion_mirroring = Vector2( 2000, 2000 )
+
+[node name="Sprite" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2( 1000, 1000 )
+texture = ExtResource( 3 )
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 50
+gravity = Vector2( 0, 0 )
+
+[node name="RigidBody2D" parent="." instance=ExtResource( 4 )]
+position = Vector2( 319.28, 321.401 )
+
+[node name="RigidBody2D2" parent="." instance=ExtResource( 4 )]
+position = Vector2( 593.191, 319.731 )
+
+[node name="RigidBody2D3" parent="." instance=ExtResource( 4 )]
+position = Vector2( 531.394, 162.733 )
+
+[node name="RigidBody2D4" parent="." instance=ExtResource( 4 )]
+position = Vector2( 97.1454, 217.85 )
+
+[node name="RigidBody2D5" parent="." instance=ExtResource( 4 )]
+position = Vector2( 168.963, 74.2136 )
+
+[node name="RigidBody2D6" parent="." instance=ExtResource( 4 )]
+position = Vector2( 424.502, 9.07639 )
