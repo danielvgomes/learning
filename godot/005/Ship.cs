@@ -7,9 +7,11 @@ public class Ship : RigidBody2D
 	private float torque = 10000;
 	private float rotationDir;
 	private Vector2 shootingPosition;
+	private RigidBody2D bulletInstance;
+	private bool shooting;
 	
 	[Export]
-	PackedScene bullet;
+	PackedScene bulletScene;
 	
 	public Ship()
 	{
@@ -19,10 +21,32 @@ public class Ship : RigidBody2D
 	public void Shoot()
 	{
 		Log.p("Shoot()");
+		
+		
+		// Log.p("meparent: " + GetParent());
+		// bulletInstance.GetNode<RigidBody2D>("HelloGirl");
+		// Log.p(bulletInstance.GetPosition());
+		
+		/* // isso fuciona sqn, bora tentar de novo
 		Log.p(GetNode<Position2D>("Position2D").GlobalPosition);
 		shootingPosition = GetNode<Position2D>("Position2D").GlobalPosition;
+		Bullet blah = new Bullet();
+		blah.Position = shootingPosition;
+		blah.Move();
+		Log.p("shootingPosition " + shootingPosition);
+		GetParent().AddChild(blah);
+		*/
 	}
 	
+	public override void _Process(float delta)
+	{
+		if (shooting)
+		{
+		bulletInstance = bulletScene.Instance() as RigidBody2D;
+		AddChild(bulletInstance);
+		// bulletInstance.Move();
+		}
+	}
 	
 	public override void _IntegrateForces(Physics2DDirectBodyState state)
 	{
@@ -50,9 +74,15 @@ public class Ship : RigidBody2D
 		}
 		if (Input.IsActionPressed("ui_home"))
 		{
-			Shoot();
+			shooting = true;
+			Log.p("my rotation: " + Rotation);
 		}
-		
+		else
+		{
+			shooting = false;
+		}
+	
+			
 		SetAppliedTorque(rotationDir * torque);
 		rotationDir = 0;
 	}

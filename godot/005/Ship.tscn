@@ -14,7 +14,7 @@ gravity_scale = 0.0
 linear_damp = 1.0
 angular_damp = 4.0
 script = ExtResource( 1 )
-bullet = ExtResource( 2 )
+bulletScene = ExtResource( 2 )
 
 [node name="Asset 1" type="Sprite" parent="."]
 rotation = 3.14159

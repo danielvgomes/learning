@@ -9,7 +9,6 @@ script = ExtResource( 1 )
 ship = ExtResource( 2 )
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-editor/display_folded = true
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
 editor/display_folded = true
