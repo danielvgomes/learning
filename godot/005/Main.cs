@@ -8,8 +8,6 @@ public class Main : Node2D
 	
 	Camera2D myCam = new Camera2D();
 	RigidBody2D s;
-
-	// Ship s;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -20,9 +18,7 @@ public class Main : Node2D
 		Log.debug = true;
 		s = ship.Instance() as RigidBody2D;
 		s.SetPosition(new Vector2(10000f, 10000f));
-		// var cam = (Camera2D)GetNode("Camera2D");
 		// cam.MakeCurrent();
-		// Node2D menode = GetNode<Node2D>("Node2D");
 		s.AddChild(myCam);
 		myCam.MakeCurrent();
 		// var p = (CPUParticles2D)GetNode("ParallaxBackground/ParallaxLayer/CPUParticles2D");
@@ -36,10 +32,7 @@ public class Main : Node2D
 		myCam.DragMarginTop = 0;
 		myCam.DragMarginBottom = 0;
 		// myCam.SmoothingEnabled = true;
-		
-		// Log.p(cam.Position);
-		// Log.p("esa cameras e' corete: " + cam.Current);
-		// s = new Ship();
+
 		AddChild(s);
 		Log.p("AddChild(s.ship)");
     }
@@ -57,7 +50,14 @@ public class Main : Node2D
 			{
 				GetTree().Quit();
 			}
+			
+			if (eventKey.Pressed && eventKey.Scancode == (int)KeyList.Enter)
+			{
+				Log.p("Enterdddd");
+				// Shoot();
+			}
 		}
+		
 	}
 
 	public override void _Input(InputEvent @event)
