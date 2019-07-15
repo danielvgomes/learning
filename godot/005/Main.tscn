@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Main.cs" type="Script" id=1]
 [ext_resource path="res://Ship.tscn" type="PackedScene" id=2]
 [ext_resource path="res://textures/stars_texture_2.png" type="Texture" id=3]
+[ext_resource path="res://Dummy.tscn" type="PackedScene" id=4]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
@@ -73,3 +74,6 @@ current = true
 zoom = Vector2( 1.5, 1.5 )
 smoothing_enabled = true
 smoothing_speed = 7.0
+
+[node name="RigidBody2D" parent="." instance=ExtResource( 4 )]
+position = Vector2( 10100, 10100 )

@@ -7,7 +7,9 @@ public class Ship : RigidBody2D
 	private float torque = 10000;
 	private float rotationDir;
 	
-	private RigidBody2D bulletInstance;
+	// private RigidBody2D bulletInstance;
+	
+	
 	private bool shot, shooting;
 	private Timer t;
 	
@@ -32,7 +34,7 @@ public class Ship : RigidBody2D
 		{
 			if (!shot)
 			{
-				bulletInstance = bulletScene.Instance() as RigidBody2D;
+				RigidBody2D bulletInstance = bulletScene.Instance() as RigidBody2D;
 				bulletInstance.Rotation = Rotation;
 				bulletInstance.Position = GetNode<Position2D>("Position2D").Position;
 				AddChild(bulletInstance);
@@ -74,7 +76,7 @@ public class Ship : RigidBody2D
 		{
 			rotationDir -= 1;
 		}
-		if (Input.IsActionPressed("ui_home"))
+		if (Input.IsActionPressed("shoot_1"))
 		{
 			shooting = true;
 		}
@@ -82,6 +84,15 @@ public class Ship : RigidBody2D
 		{
 			shooting = false;
 		}
+		if (Input.IsActionPressed("shoot_2"))
+		{
+			Log.p(GetNode<RayCast2D>("RayCast2D").GetCollisionPoint());
+		}
+		else
+		{
+			// TODO: create method (haha lol)
+		}
+			
 			
 		SetAppliedTorque(rotationDir * torque);
 		rotationDir = 0;
