@@ -86,10 +86,30 @@ public class Ship : RigidBody2D
 		}
 		if (Input.IsActionPressed("shoot_2"))
 		{
-			Log.p(GetNode<RayCast2D>("RayCast2D").GetCollisionPoint());
+			GetNode<CPUParticles2D>("Weapon1").Emitting = true;
+			
+			Vector2 collisionPoint = GetNode<RayCast2D>("RayCast2D").GetCollisionPoint();
+			float distanceFromObject = GetGlobalPosition().DistanceTo(collisionPoint);
+			Log.p("distanc/e from object: " + (distanceFromObject/1000));
+			Log.p("is colliding: " + GetNode<RayCast2D>("RayCast2D").IsColliding());
+			
+			
+			if (GetNode<RayCast2D>("RayCast2D").IsColliding())
+			{
+				GetNode<CPUParticles2D>("Weapon1").Lifetime = (distanceFromObject/1000);
+				// GetNode<CPUParticles2D>("Weapon1").Amount = (int)(distanceFromObject/100);
+			}
+			else
+			{
+				GetNode<CPUParticles2D>("Weapon1").Lifetime = 1f;
+				// GetNode<CPUParticles2D>("Weapon1").Amount = 10;
+			}
+			
+			
 		}
 		else
 		{
+			GetNode<CPUParticles2D>("Weapon1").Emitting = false;
 			// TODO: create method (haha lol)
 		}
 			
