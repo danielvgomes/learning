@@ -7,14 +7,17 @@ public class Ship : RigidBody2D
 	private float torque = 10000;
 	private float rotationDir;
 	
-	// private RigidBody2D bulletInstance;
-	
-	
-	private bool shot, shooting;
-	private Timer t;
+	private bool shot, shooting, shooting2, shot2;
+	private Timer t, t2;
 	
 	[Export]
 	PackedScene bulletScene;
+	
+	[Export]
+	PackedScene bulletScene2;
+	
+	[Signal]
+	delegate void Shoot(PackedScene bullet, float direction, Vector2 location);
 	
 	public Ship()
 	{
@@ -24,8 +27,13 @@ public class Ship : RigidBody2D
 	public override void _Ready()
 	{
 		t = new Timer();
+		t2 = new Timer();
 		AddChild(t);
+		AddChild(t2);
 		t.Connect("timeout", this, nameof(onTimerTimeout));
+		t2.Connect("timeout", this, nameof(onTimerTimeout2));
+		Log.p("suck my ship: " + GetTree().GetRoot().GetPath());
+		
 	}
 	
 	public override void _Process(float delta)
@@ -34,19 +42,40 @@ public class Ship : RigidBody2D
 		{
 			if (!shot)
 			{
-				RigidBody2D bulletInstance = bulletScene.Instance() as RigidBody2D;
-				bulletInstance.Rotation = Rotation;
-				bulletInstance.Position = GetNode<Position2D>("Position2D").Position;
-				AddChild(bulletInstance);
+				// Log.p("Ship - _Process");
 				shot = true;
 				t.Start(0.1f);
+				// Log.p("Ship - emitting...");
+				EmitSignal(nameof(Shoot), bulletScene, (Rotation + Math.PI * 90 / 180.0), GetNode<Position2D>("Position2D").GlobalPosition);
+				// Log.p("Ship - emitting... done");
+				// Log.p("vamos testar essa merda:");
+				// Log.p("rotation -> " + (Rotation * (180.0 / Math.PI)));
+				// Log.p("globalpos -> " + GetNode<Position2D>("Position2D").GlobalPosition);
+			}
+		}
+		
+		if (shooting2)
+		{
+			if (!shot2)
+			{
+				KinematicBody2D bulletInstance2 = bulletScene2.Instance() as KinematicBody2D;
+				bulletInstance2.Rotation = Rotation;
+				bulletInstance2.Position = GetNode<Position2D>("Position2D").GlobalPosition;
+				GetParent().AddChild(bulletInstance2);
+				shot2 = true;
+				t2.Start(0.1f);
 			}
 		}
 	}
 	
-		public void onTimerTimeout()
+	public void onTimerTimeout()
 	{
 		shot = false;
+	}
+	
+	public void onTimerTimeout2()
+	{
+		shot2 = false;
 	}
 	
 	public override void _IntegrateForces(Physics2DDirectBodyState state)
@@ -86,33 +115,27 @@ public class Ship : RigidBody2D
 		}
 		if (Input.IsActionPressed("shoot_2"))
 		{
-			GetNode<CPUParticles2D>("Weapon1").Emitting = true;
-			
+			shooting2 = true;
+			// GetNode<CPUParticles2D>("Weapon1").Emitting = true;
 			Vector2 collisionPoint = GetNode<RayCast2D>("RayCast2D").GetCollisionPoint();
 			float distanceFromObject = GetGlobalPosition().DistanceTo(collisionPoint);
-			Log.p("distanc/e from object: " + (distanceFromObject/1000));
+			Log.p("distance from object: " + (distanceFromObject));
 			Log.p("is colliding: " + GetNode<RayCast2D>("RayCast2D").IsColliding());
-			
 			
 			if (GetNode<RayCast2D>("RayCast2D").IsColliding())
 			{
-				GetNode<CPUParticles2D>("Weapon1").Lifetime = (distanceFromObject/1000);
-				// GetNode<CPUParticles2D>("Weapon1").Amount = (int)(distanceFromObject/100);
+				// GetNode<CPUParticles2D>("Weapon1").Lifetime = (distanceFromObject/1000);
 			}
 			else
 			{
-				GetNode<CPUParticles2D>("Weapon1").Lifetime = 1f;
-				// GetNode<CPUParticles2D>("Weapon1").Amount = 10;
+				// GetNode<CPUParticles2D>("Weapon1").Lifetime = 1f;
 			}
-			
-			
 		}
 		else
 		{
-			GetNode<CPUParticles2D>("Weapon1").Emitting = false;
-			// TODO: create method (haha lol)
+			shooting2 = false;
+			// GetNode<CPUParticles2D>("Weapon1").Emitting = false;
 		}
-			
 			
 		SetAppliedTorque(rotationDir * torque);
 		rotationDir = 0;
