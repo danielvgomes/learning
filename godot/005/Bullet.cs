@@ -6,7 +6,7 @@ public class Bullet : Area2D
 	// private Vector2 thrust = new Vector2(0, 500);
 	public Vector2 Velocity;
 	private Timer t;
-	int Speed = 500;
+	int Speed = 1000;
 	
 	public Bullet()
 	{
@@ -21,7 +21,7 @@ public class Bullet : Area2D
 	{
 		// Log.p("Bullet - Start method called");
 		Velocity = new Vector2(Speed, 0).Rotated(r);
-		Log.p("suck my bullet: " + this.GetPath());
+		// Log.p("suck my bullet: " + this.GetPath());
 	}
 	
 private void onArea2DAreEntered(object area)

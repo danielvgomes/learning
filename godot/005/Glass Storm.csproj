@@ -49,6 +49,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Asteroid1.cs" />
+    <Compile Include="Asteroid2.cs" />
+    <Compile Include="Asteroid3.cs" />
+    <Compile Include="Asteroid4.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Bullet2.cs" />
     <Compile Include="Dummy.cs" />

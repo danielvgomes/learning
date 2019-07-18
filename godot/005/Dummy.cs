@@ -13,6 +13,14 @@ public class Dummy : RigidBody2D
         
     }
 	
+	private void onArea2DAreaShapeEntered(int area_id, object area, int area_shape, int self_shape)
+	{
+		// Log.p("area_id " + area_id);
+		// Log.p("area " + area);
+		// Log.p("area_shape " + area_shape);
+		// Log.p("self_shape " + self_shape);
+	}
+	
 	private void onArea2DAreaEntered(object area)
 	{
 		Log.p("bala min acerto " + area);
