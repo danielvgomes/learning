@@ -96,9 +96,10 @@ public class Main : Node2D
 	{
 		if (@event is InputEventMouseButton eventMouseButton)
 		{
-			Log.p("Click");
-			Log.p(GetViewport().GetMousePosition().x + ", " + GetViewport().GetMousePosition().y);
-			Log.p("agrak q saok eaks x: " + s.Position.x + ", " + s.Position.y);
+			Log.p("mouse position: " + GetViewport().GetMousePosition().x + ", " + GetViewport().GetMousePosition().y);
+			Log.p("ship position: " + s.Position.x + ", " + s.Position.y);
+			// var myCam = GetCamera();
+			// Log.p("camera: " + myCam.IsCurrent());
 		}
 	}
 	

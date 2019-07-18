@@ -55,7 +55,9 @@
     <Compile Include="Asteroid4.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="Bullet2.cs" />
+    <Compile Include="Camera2D.cs" />
     <Compile Include="Dummy.cs" />
+    <Compile Include="FPS.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
