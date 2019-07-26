@@ -42,5 +42,9 @@ alt + H -> motra tuda
 Clear Location / Clear Scale / Clear Rotation / Clear Origin
 Hotkey:	Alt-G, Alt-S, Alt-R, Alt-O
 
+ctrl + e -> mark seam
+
+ctrl + a -> apply transforms
+
 
 
