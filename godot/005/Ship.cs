@@ -7,7 +7,7 @@ public class Ship : RigidBody2D
 	private float torque = 10000;
 	private float rotationDir;
 	
-	private bool shot, shooting, shooting2, shot2;
+	private bool shot, shooting, shooting2, shot2, shieldUp = false;
 	private Timer t, t2;
 	
 	[Export]
@@ -33,7 +33,7 @@ public class Ship : RigidBody2D
 		t.Connect("timeout", this, nameof(onTimerTimeout));
 		t2.Connect("timeout", this, nameof(onTimerTimeout2));
 		Log.p("suck my ship: " + GetTree().GetRoot().GetPath());
-		
+		// GetNode<Sprite>("Sprite").SetTexture(sS);
 	}
 	
 	public override void _Process(float delta)
@@ -78,8 +78,41 @@ public class Ship : RigidBody2D
 		shot2 = false;
 	}
 	
+	private void onAnimationPlayerAnimationFinished(String anim_name)
+	{
+    	if (anim_name == "shield_up")
+		{
+			GetNode<Sprite>("sS").GetNode<AnimationPlayer>("AnimationPlayer").Play("shield_loop");
+		}
+	
+		if (anim_name == "shield_down")
+		{
+		}
+	}
+	
+	
 	public override void _IntegrateForces(Physics2DDirectBodyState state)
 	{
+		
+		if (Input.IsActionPressed("shield_up"))
+		{
+			if (!shieldUp)
+			{
+				GetNode<Sprite>("sS").GetNode<AnimationPlayer>("AnimationPlayer").Play("shield_up");
+				shieldUp = true;
+			}
+		}
+		
+		if (Input.IsActionPressed("shield_down"))
+		{
+			if (shieldUp)
+			{
+				GetNode<Sprite>("sS").GetNode<AnimationPlayer>("AnimationPlayer").Play("shield_down");
+				shieldUp = false;
+			}
+		}
+		
+		
 		if (Input.IsActionPressed("ui_up") || Input.IsActionPressed("ui_down"))
 		{
 			if (Input.IsActionPressed("ui_up"))

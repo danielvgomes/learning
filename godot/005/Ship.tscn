@@ -1,14 +1,63 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Ship.cs" type="Script" id=1]
 [ext_resource path="res://Bullet.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Bullet2.tscn" type="PackedScene" id=3]
-[ext_resource path="res://art/Asset 1.png" type="Texture" id=4]
-[ext_resource path="res://icon.png" type="Texture" id=5]
+[ext_resource path="res://art/1259_red_ship.png" type="Texture" id=4]
 
-[sub_resource type="ConvexPolygonShape2D" id=1]
+[sub_resource type="Animation" id=1]
+resource_name = "shield_down"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 65, 69 ]
+}
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="Animation" id=2]
+resource_name = "shield_loop"
+length = 5.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.00576175, 5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 6, 64 ]
+}
+
+[sub_resource type="Animation" id=3]
+length = 0.5
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0, 5 ]
+}
+
+[sub_resource type="Curve" id=4]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0.4714 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="Gradient" id=5]
+colors = PoolColorArray( 0.976774, 1, 0, 1, 1, 0, 0, 0 )
 
 [node name="Ship" type="RigidBody2D"]
 mass = 0.306122
@@ -19,38 +68,66 @@ script = ExtResource( 1 )
 bulletScene = ExtResource( 2 )
 bulletScene2 = ExtResource( 3 )
 
-[node name="Asset 1" type="Sprite" parent="."]
-rotation = 3.14159
-texture = ExtResource( 4 )
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2( 0, 5.24 )
-rotation = 3.14159
-scale = Vector2( 5.4, 4.2 )
-shape = SubResource( 1 )
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="."]
-position = Vector2( 0, -20.83 )
-rotation = 3.14159
-scale = Vector2( 1.4, 0.5 )
-shape = SubResource( 2 )
-
 [node name="Position2D" type="Position2D" parent="."]
-position = Vector2( 0, 60 )
+position = Vector2( 0, 72 )
 
-[node name="RayCast2D" type="RayCast2D" parent="."]
-enabled = true
-cast_to = Vector2( 0, 1000 )
+[node name="sS" type="Sprite" parent="."]
+rotation = 3.14159
+scale = Vector2( 0.5, 0.5 )
+texture = ExtResource( 4 )
+vframes = 7
+hframes = 10
+frame = 69
 
-[node name="Weapon1" type="CPUParticles2D" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="sS"]
+anims/shield_down = SubResource( 1 )
+anims/shield_loop = SubResource( 2 )
+anims/shield_up = SubResource( 3 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -0.0227356, -57.4438, 14.7226, -56.9682, 19.7169, -15.1106, 59.6719, -41.5094, 63.4772, -28.6667, 24.7113, 27.6983, 26.8949, 51.2919, 18.2586, 69.8932, 0.155457, 71.8862, -17.1172, 70.0593, -26.7501, 51.9562, -24.0433, 27.9361, -63.5226, -28.4289, -59.7174, -42.2229, -19.5246, -14.8728, -14.2924, -56.9682 )
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
 visible = false
 show_behind_parent = true
-rotation = 1.5708
-amount = 10
+position = Vector2( 0, -57 )
+rotation = -1.5708
+amount = 100
+lifetime = 2.0
+speed_scale = 2.0
 local_coords = false
-texture = ExtResource( 5 )
+emission_shape = 2
+emission_rect_extents = Vector2( 0, 10 )
 spread = 0.0
 gravity = Vector2( 0, 0 )
-initial_velocity = 1000.0
-scale_amount = 0.3
-color = Color( 0.733333, 0.772549, 0.160784, 1 )
+initial_velocity = 12.0
+initial_velocity_random = 1.0
+angular_velocity = 200.0
+angular_velocity_random = 1.0
+linear_accel = 8.0
+angle = 45.0
+scale_amount = 15.0
+scale_amount_curve = SubResource( 4 )
+color_ramp = SubResource( 5 )
+
+[node name="CPUParticles2D2" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+position = Vector2( 0, -57 )
+rotation = -1.5708
+amount = 200
+lifetime = 0.5
+local_coords = false
+emission_shape = 2
+emission_rect_extents = Vector2( 0, 5 )
+spread = 0.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 12.0
+initial_velocity_random = 0.67
+angular_velocity = 200.0
+angular_velocity_random = 1.0
+linear_accel = 8.0
+angle = 45.0
+scale_amount = 15.0
+scale_amount_curve = SubResource( 4 )
+color_ramp = SubResource( 5 )
+[connection signal="animation_finished" from="sS/AnimationPlayer" to="." method="onAnimationPlayerAnimationFinished"]

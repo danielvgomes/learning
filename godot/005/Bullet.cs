@@ -21,6 +21,7 @@ public class Bullet : Area2D
 	{
 		// Log.p("Bullet - Start method called");
 		Velocity = new Vector2(Speed, 0).Rotated(r);
+		Rotation = r;
 		// Log.p("suck my bullet: " + this.GetPath());
 	}
 	
