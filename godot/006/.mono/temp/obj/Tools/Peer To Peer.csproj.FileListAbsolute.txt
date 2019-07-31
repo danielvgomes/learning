@@ -4,3 +4,9 @@ C:\Users\gedai\workspace\learning\godot\006\.mono\temp\bin\Tools\Peer To Peer.dl
 C:\Users\gedai\workspace\learning\godot\006\.mono\temp\bin\Tools\Peer To Peer.pdb
 C:\Users\gedai\workspace\learning\godot\006\.mono\temp\obj\Tools\Peer To Peer.dll
 C:\Users\gedai\workspace\learning\godot\006\.mono\temp\obj\Tools\Peer To Peer.pdb
+e:\workspace\learning\godot\006\.mono\temp\bin\Tools\Peer To Peer.dll
+e:\workspace\learning\godot\006\.mono\temp\bin\Tools\Peer To Peer.pdb
+e:\workspace\learning\godot\006\.mono\temp\obj\Tools\Peer To Peer.csprojAssemblyReference.cache
+e:\workspace\learning\godot\006\.mono\temp\obj\Tools\Peer To Peer.csproj.CoreCompileInputs.cache
+e:\workspace\learning\godot\006\.mono\temp\obj\Tools\Peer To Peer.dll
+e:\workspace\learning\godot\006\.mono\temp\obj\Tools\Peer To Peer.pdb

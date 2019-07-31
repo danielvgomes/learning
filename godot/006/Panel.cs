@@ -3,26 +3,29 @@ using System;
 
 public class Panel : Godot.Panel
 {
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
-
-    // Called when the node enters the scene tree for the first time.
+	private Color redColor = new Color(0.4f, 0.15f, 0.15f);
+	private Color blueColor = new Color(0.15f, 0.15f, 0.4f);
+	private Color grayColor = new Color(0.15f, 0.15f, 0.15f);
+	
+	private StyleBoxFlat style = new StyleBoxFlat();
+	
     public override void _Ready()
     {
-		var redColor = new Color(0.4f, 0.15f, 0.15f);
-		var blueColor = new Color(0.15f, 0.15f, 0.4f);
-		var grayColor = new Color(0.15f, 0.15f, 0.15f);
-		var style = new StyleBoxFlat();
-		
 		style.SetBgColor(grayColor);
 		Set("custom_styles/panel", style);
-
+		
+		GetNode<OptionButton>("OptionButton").AddItem("Host", 0);
+		GetNode<OptionButton>("OptionButton").AddItem("Client", 1);
+		
     }
-
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+	
+	public void changeToRed()
+	{
+		style.SetBgColor(redColor);
+	}
+	
+	public void changeToBlue()
+	{
+		style.SetBgColor(blueColor);
+	}
 }

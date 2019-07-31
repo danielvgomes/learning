@@ -14,7 +14,7 @@ public class Network : Node2D
 		var peer = new NetworkedMultiplayerENet();
 		// peer.CreateServer(5000, 2);
 		// GetTree().SetNetworkPeer(peer);
-		
+		GetNode<Panel>("Panel").changeToBlue();
 		
 		// var myPeer = GetTree().GetNetworkPeer();
 		// GD.Print(GetTree().IsNetworkServer());
