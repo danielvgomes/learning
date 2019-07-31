@@ -4,3 +4,9 @@ E:\workspace\learning\godot\005\.mono\temp\bin\Tools\Glass Storm.dll
 E:\workspace\learning\godot\005\.mono\temp\bin\Tools\Glass Storm.pdb
 E:\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.dll
 E:\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.pdb
+C:\Users\gedai\workspace\learning\godot\005\.mono\temp\bin\Tools\Glass Storm.dll
+C:\Users\gedai\workspace\learning\godot\005\.mono\temp\bin\Tools\Glass Storm.pdb
+C:\Users\gedai\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.csprojAssemblyReference.cache
+C:\Users\gedai\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.csproj.CoreCompileInputs.cache
+C:\Users\gedai\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.dll
+C:\Users\gedai\workspace\learning\godot\005\.mono\temp\obj\Tools\Glass Storm.pdb
