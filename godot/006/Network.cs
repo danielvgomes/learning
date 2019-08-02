@@ -1,36 +1,40 @@
 using Godot;
 using System;
+using System.Collections;
 
 public class Network : Node2D
 {
-    // Declare member variables here. Examples:
-    // private int a = 2;
-    // private string b = "text";
 	private Panel panel;
 	private NetworkedMultiplayerENet peer;
 	private int maxPlayers = 500;
-	private RigidBody2D selfie;
+	private ArrayList players;
 	
-    // Called when the node enters the scene tree for the first time.
-    public override void _Ready()
-    {
+	[Remote]
+	public int lolRotation;
+	
+	public override void _Ready()
+	{
 		panel = GetNode<Panel>("Panel");
 		// GetTree().SetNetworkPeer(peer);
 		
 		GetTree().Connect("network_peer_connected", this, "networkPeerConnected");
 		GetTree().Connect("server_disconnected", this, "serverDisconnected");
 		
-		selfie = (RigidBody2D)panel.GetNode<RigidBody2D>("RigidBody2D");
+		var playerScene = (PackedScene)ResourceLoader.Load("res://Ridiculous.tscn");
+		// RigidBody2D myself = playerScene.GetNode<RigidBody2D>("Ridiculous");
 		
+		RigidBody2D myself = playerScene.Instance() as RigidBody2D;
+		
+		myself.Position = new Vector2(200, 200);
+		// myself.Rotation = Rotation;
+		// myself.Position = GetNode<Position2D>("Position2D").GlobalPosition;
+		
+		GetNode<Panel>("Panel").AddChild(myself);
+		
+		// selfie = (RigidBody2D)panel.GetNode<RigidBody2D>("RigidBody2D");
 		// var myPeer = GetTree().GetNetworkPeer();
 		// GD.Print(GetTree().IsNetworkServer());
-    }
-	
-//  // Called every frame. 'delta' is the elapsed time since the previous frame.
-//  public override void _Process(float delta)
-//  {
-//      
-//  }
+	}
 	
 	private void onConnectPressed()
 	{
@@ -42,18 +46,18 @@ public class Network : Node2D
 		{
 			peer.CreateServer(port, maxPlayers);
 			panel.changeToRed();
-			selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
+			// selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
 			
 		}
 		else
 		{
 			peer.CreateClient(address, port);
 			panel.changeToBlue();
-			selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
+			// selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
 		}
 		
 		GetTree().SetNetworkPeer(peer);
-		selfie.SetNetworkMaster(GetTree().GetNetworkUniqueId());
+		// selfie.SetNetworkMaster(GetTree().GetNetworkUniqueId());
 		
 		panel.print("OptionButton = " + panel.GetNode<OptionButton>("OptionButton").GetSelectedId());
 		panel.print("IsNetworkServer = " + GetTree().IsNetworkServer());
@@ -97,6 +101,4 @@ public class Network : Node2D
 	{
 		panel.print("register register register");
 	}
-	
-	
 }

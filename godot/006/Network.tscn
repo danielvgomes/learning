@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Network.cs" type="Script" id=1]
 [ext_resource path="res://Panel.cs" type="Script" id=2]
-[ext_resource path="res://icon.png" type="Texture" id=3]
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource( 1 )
@@ -69,14 +68,6 @@ amount = 50
 lifetime = 2.15
 emission_shape = 2
 emission_rect_extents = Vector2( 175, 1 )
-
-[node name="RigidBody2D" type="RigidBody2D" parent="Panel"]
-gravity_scale = 0.0
-
-[node name="Sprite" type="Sprite" parent="Panel/RigidBody2D"]
-position = Vector2( 320, 365 )
-scale = Vector2( 0.5, 0.5 )
-texture = ExtResource( 3 )
 [connection signal="pressed" from="Panel/Connect" to="." method="onConnectPressed"]
 [connection signal="pressed" from="Panel/Disconnect" to="." method="onDisconnectPressed"]
 [connection signal="pressed" from="Panel/Send" to="." method="onSendPressed"]
