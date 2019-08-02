@@ -8,6 +8,7 @@ public class Network : Node2D
 	private NetworkedMultiplayerENet peer;
 	private int maxPlayers = 500;
 	private ArrayList players;
+	private Random random = new Random();
 	
 	[Remote]
 	public int lolRotation;
@@ -25,7 +26,7 @@ public class Network : Node2D
 		
 		RigidBody2D myself = playerScene.Instance() as RigidBody2D;
 		
-		myself.Position = new Vector2(200, 200);
+		myself.Position = new Vector2(random.Next(20, 380), random.Next(100, 335));
 		// myself.Rotation = Rotation;
 		// myself.Position = GetNode<Position2D>("Position2D").GlobalPosition;
 		
@@ -100,5 +101,6 @@ public class Network : Node2D
 	public void registerPlayer()
 	{
 		panel.print("register register register");
+		panel.print("GetRpcSenderId() = " + GetTree().GetRpcSenderId());
 	}
 }
