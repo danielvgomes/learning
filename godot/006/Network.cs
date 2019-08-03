@@ -9,6 +9,7 @@ public class Network : Node2D
 	private int maxPlayers = 500;
 	private ArrayList players;
 	private Random random = new Random();
+	private RigidBody2D myself;
 	
 	[Remote]
 	public int lolRotation;
@@ -24,13 +25,15 @@ public class Network : Node2D
 		var playerScene = (PackedScene)ResourceLoader.Load("res://Ridiculous.tscn");
 		// RigidBody2D myself = playerScene.GetNode<RigidBody2D>("Ridiculous");
 		
-		RigidBody2D myself = playerScene.Instance() as RigidBody2D;
+		myself = playerScene.Instance() as RigidBody2D;
 		
 		myself.Position = new Vector2(random.Next(20, 380), random.Next(100, 335));
 		// myself.Rotation = Rotation;
 		// myself.Position = GetNode<Position2D>("Position2D").GlobalPosition;
 		
 		GetNode<Panel>("Panel").AddChild(myself);
+		
+		players = new ArrayList();
 		
 		// selfie = (RigidBody2D)panel.GetNode<RigidBody2D>("RigidBody2D");
 		// var myPeer = GetTree().GetNetworkPeer();
@@ -46,18 +49,21 @@ public class Network : Node2D
 		if (panel.GetNode<OptionButton>("OptionButton").GetSelectedId() == 0)
 		{
 			peer.CreateServer(port, maxPlayers);
+			GetTree().SetNetworkPeer(peer);
+			myself.SetNetworkMaster(GetTree().GetNetworkUniqueId());
 			panel.changeToRed();
+			players.Add(myself);
 			// selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
-			
 		}
 		else
 		{
 			peer.CreateClient(address, port);
+			GetTree().SetNetworkPeer(peer);
 			panel.changeToBlue();
 			// selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
 		}
 		
-		GetTree().SetNetworkPeer(peer);
+		// GetTree().SetNetworkPeer(peer);
 		// selfie.SetNetworkMaster(GetTree().GetNetworkUniqueId());
 		
 		panel.print("OptionButton = " + panel.GetNode<OptionButton>("OptionButton").GetSelectedId());
@@ -77,13 +83,18 @@ public class Network : Node2D
 	
 	private void onSendPressed()
 	{
-		Rpc("holyDog");
-		Rpc("registerPlayer");
+		// Rpc("holyDog");
+		// Rpc("registerPlayer");
+		int prov = players.Count;
+		panel.print("counting players -> " + prov.ToString());
+		panel.print("this is meself -> " + GetTree().GetNetworkUniqueId());
 	}
 	
 	public void networkPeerConnected(int id)
 	{
+		// object[] myObj = new object[] {"132", 12, "hello"};
 		panel.print("networkPeerConnected " + id);
+		RpcId(id, "registerPlayer");
 	}
 	
 	public void serverDisconnected()
@@ -100,7 +111,7 @@ public class Network : Node2D
 	[Remote]
 	public void registerPlayer()
 	{
-		panel.print("register register register");
-		panel.print("GetRpcSenderId() = " + GetTree().GetRpcSenderId());
+		panel.print("registerPlayer -> GetRpcSenderId() = " + GetTree().GetRpcSenderId());
+		players.Add(GetTree().GetRpcSenderId());
 	}
 }
