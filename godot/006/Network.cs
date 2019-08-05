@@ -1,15 +1,15 @@
 using Godot;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
 public class Network : Node2D
 {
 	private Panel panel;
 	private NetworkedMultiplayerENet peer;
 	private int maxPlayers = 500;
-	private ArrayList players;
+	private List<Node> players;
 	private Random random = new Random();
-	private RigidBody2D myself;
+	private Node myself;
 	
 	[Remote]
 	public int lolRotation;
@@ -25,15 +25,14 @@ public class Network : Node2D
 		var playerScene = (PackedScene)ResourceLoader.Load("res://Ridiculous.tscn");
 		// RigidBody2D myself = playerScene.GetNode<RigidBody2D>("Ridiculous");
 		
-		myself = playerScene.Instance() as RigidBody2D;
+		myself = playerScene.Instance();
 		
-		myself.Position = new Vector2(random.Next(20, 380), random.Next(100, 335));
+		myself.GetNode<RigidBody2D>("Ridiculous").Position = new Vector2(random.Next(20, 380), random.Next(100, 335));
 		// myself.Rotation = Rotation;
 		// myself.Position = GetNode<Position2D>("Position2D").GlobalPosition;
 		
 		GetNode<Panel>("Panel").AddChild(myself);
-		
-		players = new ArrayList();
+		players = new List<Node>();
 		
 		// selfie = (RigidBody2D)panel.GetNode<RigidBody2D>("RigidBody2D");
 		// var myPeer = GetTree().GetNetworkPeer();
@@ -42,6 +41,7 @@ public class Network : Node2D
 	
 	private void onConnectPressed()
 	{
+		players = new List<Node>();
 		peer = new NetworkedMultiplayerENet();
 		int port = System.Convert.ToInt32(panel.GetNode<TextEdit>("Port").Text);
 		String address = panel.GetNode<TextEdit>("Address").Text;
@@ -50,8 +50,13 @@ public class Network : Node2D
 		{
 			peer.CreateServer(port, maxPlayers);
 			GetTree().SetNetworkPeer(peer);
+			
 			myself.SetNetworkMaster(GetTree().GetNetworkUniqueId());
+			myself.SetName("mesef is sever");
+			
 			panel.changeToRed();
+			
+			panel.print("adding myself as a player");
 			players.Add(myself);
 			// selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
 		}
@@ -59,7 +64,9 @@ public class Network : Node2D
 		{
 			peer.CreateClient(address, port);
 			GetTree().SetNetworkPeer(peer);
+			myself.SetName("mesef is clien");
 			panel.changeToBlue();
+			panel.print("i'm a client, i should register myself");
 			// selfie.GetNode<Sprite>("Sprite").Position = new Vector2(80, 365);
 		}
 		
@@ -78,6 +85,7 @@ public class Network : Node2D
 		panel.print("disconnecting...");
 		GetTree().SetNetworkPeer(null);
 		peer = null;
+		players = new List<Node>();
 		panel.changeToGray();
 	}
 	
@@ -85,15 +93,34 @@ public class Network : Node2D
 	{
 		// Rpc("holyDog");
 		// Rpc("registerPlayer");
+	}
+	
+	private void onAnozerPressed()
+	{
 		int prov = players.Count;
 		panel.print("counting players -> " + prov.ToString());
 		panel.print("this is meself -> " + GetTree().GetNetworkUniqueId());
+	}
+	
+	private void onVeryPressed()
+	{
+		panel.print("players:");
+		for (int i = 0; i < players.Count; i++)
+		{
+			GD.Print(players[i].GetType());
+			GD.Print(players[i].GetName());
+			GD.Print(players[i].GetNetworkMaster());
+			// Node blz = (PackedScene)players[i];
+			// panel.print(p.GetName());
+			// panel.print(p.GetNetworkMaster());
+		}
 	}
 	
 	public void networkPeerConnected(int id)
 	{
 		// object[] myObj = new object[] {"132", 12, "hello"};
 		panel.print("networkPeerConnected " + id);
+		panel.print("someone connected, requesting registration");
 		RpcId(id, "registerPlayer");
 	}
 	
@@ -111,7 +138,9 @@ public class Network : Node2D
 	[Remote]
 	public void registerPlayer()
 	{
+		panel.print("remote method 'registerPlayer' called");
 		panel.print("registerPlayer -> GetRpcSenderId() = " + GetTree().GetRpcSenderId());
-		players.Add(GetTree().GetRpcSenderId());
+		panel.print("adding player to list");
+		// players.Add(GetTree().GetRpcSenderId());
 	}
 }

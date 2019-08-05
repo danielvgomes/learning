@@ -6,12 +6,14 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32.1054, 31.578 )
 
-[node name="Ridiculous" type="RigidBody2D"]
+[node name="Node" type="Node"]
+
+[node name="Ridiculous" type="RigidBody2D" parent="."]
 gravity_scale = 0.0
 script = ExtResource( 1 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ridiculous"]
 shape = SubResource( 1 )
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Sprite" type="Sprite" parent="Ridiculous"]
 texture = ExtResource( 2 )

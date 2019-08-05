@@ -61,6 +61,20 @@ margin_right = 260.0
 margin_bottom = 380.0
 text = "ANDTHEN.? SEND"
 
+[node name="Very" type="Button" parent="Panel"]
+margin_left = 275.0
+margin_top = 350.0
+margin_right = 380.0
+margin_bottom = 380.0
+text = "Very Button"
+
+[node name="Anozer" type="Button" parent="Panel"]
+margin_left = 20.0
+margin_top = 350.0
+margin_right = 130.0
+margin_bottom = 380.0
+text = "Anozer"
+
 [node name="CPUParticles2D" type="CPUParticles2D" parent="Panel"]
 position = Vector2( 198, 103 )
 z_index = 1
@@ -71,3 +85,5 @@ emission_rect_extents = Vector2( 175, 1 )
 [connection signal="pressed" from="Panel/Connect" to="." method="onConnectPressed"]
 [connection signal="pressed" from="Panel/Disconnect" to="." method="onDisconnectPressed"]
 [connection signal="pressed" from="Panel/Send" to="." method="onSendPressed"]
+[connection signal="pressed" from="Panel/Very" to="." method="onVeryPressed"]
+[connection signal="pressed" from="Panel/Anozer" to="." method="onAnozerPressed"]
