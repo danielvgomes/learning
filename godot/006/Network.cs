@@ -11,6 +11,15 @@ public class Network : Node2D
 	private Random random = new Random();
 	private Node myself;
 	
+	private int justVar1;
+	private int justVar2;
+	
+	[Remote]
+	public int slaveVar1;
+	
+	[Remote]
+	public int slaveVar2;
+	
 	[Remote]
 	public int lolRotation;
 	
@@ -95,25 +104,49 @@ public class Network : Node2D
 		// Rpc("registerPlayer");
 	}
 	
-	private void onAnozerPressed()
+	private void onPlusPressed()
 	{
-		int prov = players.Count;
-		panel.print("counting players -> " + prov.ToString());
-		panel.print("this is meself -> " + GetTree().GetNetworkUniqueId());
+		justVar1 += 10;
+		justVar2 += 10;
+		if (IsNetworkMaster())
+		{
+			// panel.print("rset a slave");
+			// panel.print("rset another slave");
+		}
+		else
+		{
+			// panel.print("my var = slaves");
+			// panel.print("my othervar = slaves");
+		}
+		// int prov = players.Count;
+		// panel.print("counting players -> " + prov.ToString());
+		// panel.print("this is meself -> " + GetTree().GetNetworkUniqueId());
 	}
 	
-	private void onVeryPressed()
+	private void onMinusPressed()
 	{
-		panel.print("players:");
-		for (int i = 0; i < players.Count; i++)
+		justVar1 -= 1;
+		justVar2 -= 1;
+		if (IsNetworkMaster())
 		{
+			// panel.print("rset a slave");
+			// panel.print("rset another slave");
+		}
+		else
+		{
+			// panel.print("my var = slaves");
+			// panel.print("my othervar = slaves");
+		}
+		// panel.print("players:");
+		// for (int i = 0; i < players.Count; i++)
+		/* {
 			GD.Print(players[i].GetType());
 			GD.Print(players[i].GetName());
 			GD.Print(players[i].GetNetworkMaster());
 			// Node blz = (PackedScene)players[i];
 			// panel.print(p.GetName());
 			// panel.print(p.GetNetworkMaster());
-		}
+		} */
 	}
 	
 	public void networkPeerConnected(int id)
@@ -142,5 +175,25 @@ public class Network : Node2D
 		panel.print("registerPlayer -> GetRpcSenderId() = " + GetTree().GetRpcSenderId());
 		panel.print("adding player to list");
 		// players.Add(GetTree().GetRpcSenderId());
+	}
+	
+	private void onTimerTimeout()
+	{
+		GetNode<Timer>("Timer").SetWaitTime(1f);
+		GetNode<Timer>("Timer").Start();
+		
+		if (IsNetworkMaster())
+		{
+			Rset("slaveVar1", justVar1);
+			Rset("slaveVar2", justVar2);
+		}
+		else
+		{
+			justVar1 = slaveVar1;
+			justVar2 = slaveVar2;
+		}
+		
+		panel.print(GetTree().GetNetworkUniqueId() + " justVar1 = " + justVar1);
+		panel.print(GetTree().GetNetworkUniqueId() + " justVar2 = " + justVar2);
 	}
 }
