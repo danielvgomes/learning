@@ -33,14 +33,4 @@ public class Panel : Godot.Panel
 	{
 		style.SetBgColor(grayColor);
 	}
-	
-	public void print(String s)
-	{
-		GetNode<TextEdit>("Text").InsertTextAtCursor(s + "\n");
-	}
-	
-	public void print(int i)
-	{
-		GetNode<TextEdit>("Text").InsertTextAtCursor(System.Convert.ToInt32(i) + "\n");
-	}
 }

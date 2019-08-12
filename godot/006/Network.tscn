@@ -11,6 +11,13 @@ margin_right = 400.0
 margin_bottom = 400.0
 script = ExtResource( 2 )
 
+[node name="CPUParticles2D" type="CPUParticles2D" parent="Panel"]
+position = Vector2( 200, 0 )
+amount = 50
+lifetime = 3.0
+emission_shape = 2
+emission_rect_extents = Vector2( 200, 1 )
+
 [node name="OptionButton" type="OptionButton" parent="Panel"]
 margin_left = 20.0
 margin_top = 20.0
@@ -32,14 +39,6 @@ margin_right = 380.0
 margin_bottom = 90.0
 text = "5000"
 
-[node name="Text" type="TextEdit" parent="Panel"]
-margin_left = 20.0
-margin_top = 100.0
-margin_right = 380.0
-margin_bottom = 335.0
-smooth_scrolling = true
-wrap_enabled = true
-
 [node name="Connect" type="Button" parent="Panel"]
 margin_left = 210.0
 margin_top = 20.0
@@ -53,41 +52,5 @@ margin_top = 20.0
 margin_right = 380.0
 margin_bottom = 50.0
 text = "Disco"
-
-[node name="Send" type="Button" parent="Panel"]
-margin_left = 140.0
-margin_top = 350.0
-margin_right = 260.0
-margin_bottom = 380.0
-text = "ANDTHEN.? SEND"
-
-[node name="Minus" type="Button" parent="Panel"]
-margin_left = 275.0
-margin_top = 350.0
-margin_right = 380.0
-margin_bottom = 380.0
-text = "-"
-
-[node name="Plus" type="Button" parent="Panel"]
-margin_left = 20.0
-margin_top = 350.0
-margin_right = 130.0
-margin_bottom = 380.0
-text = "+"
-
-[node name="CPUParticles2D" type="CPUParticles2D" parent="Panel"]
-position = Vector2( 198, 103 )
-z_index = 1
-amount = 50
-lifetime = 2.15
-emission_shape = 2
-emission_rect_extents = Vector2( 175, 1 )
-
-[node name="Timer" type="Timer" parent="."]
-autostart = true
 [connection signal="pressed" from="Panel/Connect" to="." method="onConnectPressed"]
 [connection signal="pressed" from="Panel/Disconnect" to="." method="onDisconnectPressed"]
-[connection signal="pressed" from="Panel/Send" to="." method="onSendPressed"]
-[connection signal="pressed" from="Panel/Minus" to="." method="onMinusPressed"]
-[connection signal="pressed" from="Panel/Plus" to="." method="onPlusPressed"]
-[connection signal="timeout" from="Timer" to="." method="onTimerTimeout"]
